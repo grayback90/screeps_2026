@@ -1,4 +1,4 @@
-# screeps_2026
+# Screeps 2026
 Scripts for the game "screeps".
 
 Info:
