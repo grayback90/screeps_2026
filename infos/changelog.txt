@@ -1,0 +1,8 @@
+xx.xx.2026
+
+01.10.2026
+- restart new
+- removed all unnessecary roles and code
+- removed folder structure
+- start with the tutorial-code from screeps
+- https://github.com/screeps/tutorial-scripts
