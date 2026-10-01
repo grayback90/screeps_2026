@@ -1,0 +1,113 @@
+/**********************************************
+*
+* file: great-filter.txt
+* date: 01.10.2027
+* version: 0.1
+*
+* Great filter to go after 
+* and to check if overconme (with date)
+* https://wiki.screepspl.us/Great_Filters/
+*
+**********************************************/
+
+1. Creep Management
+    a. Roles
+    b. Tasks/Goals
+
+2. Automatic Spawning
+    a. Headcount
+    b. Part-Count Balancing
+    c. Spawn Queues
+    d. Cold-boot
+
+3. Automatic Room Defense
+    a. Tower Defense
+    b. Creep Based-Defense
+        x. Rampart-Defenders
+        y. Repair spam
+        z. Active-Counter
+    c. SafeMode
+
+4. Effectively Harvesting Energy & Remote Mining
+    a. Harvesting Types (Kardashev scale)
+        u. Type Zero
+        v. Type One
+        w. Type Two
+        x. Type Three
+        y. Type Four?
+        z. Type Five!?
+    b. Harvesting Methods
+        x. Harvesting
+        y. Hauling
+        z. Reserving
+
+5. Claiming new rooms
+    a. Claiming
+    b. Building
+    c. Multi-Room Management
+
+6. Room Offense
+    a. Locating Targets
+    b. Choosing an attack method
+    c. More automatic attacks
+
+7. Scouting & Storing information
+    a. Screep Scouting
+    b. Observation Scouting
+    c. Storing information
+
+8. Market
+    a. Getting First Credits
+    b. Buying/Selling
+    c. Converting to Steam
+
+9. Lab logic & Boosts
+    a. Mining/buying minerals
+    b. Determining what to make
+    c. Boosting creeps
+
+10. Highway Harvesting
+    a. Detecting
+    b. Harvesting
+    c. Hauling
+
+11. Source-Keeper Harvesting
+    a. Suppressing the Keepers
+    b. Harvesting & hauling the resources
+    c. Invaders & raids
+
+12. Power Creeps
+    a. Getting the power
+    b. Creating the PowerCreeps
+    c. Using the powers
+
+13. Automatic Factories
+    a. Gathering Resources & Power Creeps
+    b. Production
+    c. Balancing / Logistics
+
+14. Inter-sharding (when shards exist)
+    a. Insuring a Memory backup
+    b. Claiming in range
+    c. Code runs on all shards
+
+15. Strongholds
+    a. Detection
+    b. Attacking
+
+16. Better Pathing & Caching Paths
+    a. Optimizing MoveTo
+        x. reusePath
+        y. ignoreCreeps
+        z. range
+    b. Using PathFinder.search()
+        z. CostMatricies
+    c. Caching & Reusing paths
+
+17. Automated Room Planning & Building
+    a. Locating Potential Rooms
+    b. Building a Plan / Searching for a Location
+        x. Bunker
+        y. Stamp/Tile
+        z. Dynamic Pattern Generation
+    c. Caching & Executing the Plan
