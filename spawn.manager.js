@@ -2,7 +2,7 @@
 *
 * file: spawn.manager.js
 * date: 02.10.2026
-* version: 0.1
+* version: 0.2
 *
 * funtions: manage the spawning of creeps
 *
@@ -24,6 +24,12 @@ var spawnManager = {
 
     run: function() {
        var spawn = Game.spawns['Spawn1'];
+        
+       //does the spawn exist?
+         if(!spawn) {
+            console.log('Spawn not found!');
+            return;
+         }
 
        //spawn busy?
        if(spawn.spawning) {
