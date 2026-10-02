@@ -8,6 +8,7 @@
 *
 **********************************************/
 
+// creep count
 var minCreeps = {
     harvester: 2,
     upgrader: 1
@@ -19,6 +20,21 @@ var spawnManager = {
        var spawn = Game.spawns['Spawn1'];
        var harvesters = _.filter(Game.creeps, (creep) => creep.memory.role == 'harvester');
        var upgraders = _.filter(Game.creeps, (creep) => creep.memory.role == 'upgrader');
+
+       var missingHarvesters = minCreeps.harvester - harvesters.length;
+       var missingUpgraders = minCreeps.upgrader - upgraders.length;
+
+       if(missingHarvesters > 0) {
+        //harvesters are missing, spawn a new one
+        cosole.log('Harvester missing, spawning a new one');
+        return;
+       }
+
+       if(missingUpgraders > 0) {
+        //upgraders are missing, spawn a new one
+        cosole.log('Upgrader missing, spawning a new one');
+        return;
+       }
 
        console.log('Harvesters: ' + harvesters.length + '/' + minCreeps.harvester + ', Upgraders: ' + upgraders.length + '/' + minCreeps.upgrader);
     }
