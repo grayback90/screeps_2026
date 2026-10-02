@@ -10,8 +10,14 @@
 
 // creep count
 var minCreeps = {
-    harvester: 2,
+    harvester: 2, 
     upgrader: 1
+};
+
+// bodies for creeps
+var creepBodies = {
+    harvester: [WORK, CARRY, MOVE],
+    upgrader: [WORK, CARRY, MOVE]
 };
 
 var spawnManager = {
@@ -26,13 +32,15 @@ var spawnManager = {
 
        if(missingHarvesters > 0) {
         //harvesters are missing, spawn a new one
-        console.log('Harvester missing, spawning a new one');
+        var result = spawn.spawnCreep(creepBodies.harvester, 'Harvester' + Game.time, {memory: {role: 'harvester'}});
+        console.log('Harvester missing, spawning a new one: ' + result);
         return;
        }
 
        if(missingUpgraders > 0) {
         //upgraders are missing, spawn a new one
-        console.log('Upgrader missing, spawning a new one');
+        var result = spawn.spawnCreep(creepBodies.upgrader, 'Upgrader' + Game.time, {memory: {role: 'upgrader'}});
+        console.log('Upgrader missing, spawning a new one: ' + result);
         return;
        }
 
