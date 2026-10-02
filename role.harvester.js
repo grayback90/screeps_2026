@@ -19,8 +19,10 @@ var roleHarvester = {
             if(creep.harvest(sources[0]) == ERR_NOT_IN_RANGE) {
                 creep.say('To Source');
                 creep.moveTo(sources[0], {visualizePathStyle: {stroke: '#ffaa00'}});
-            }else{
+            } else if (creep.harvest(sources[0]) == OK) {
                 creep.say('Harvest');
+            }else{
+                creep.say('Waiting');
             }
         }
         else {
@@ -34,7 +36,7 @@ var roleHarvester = {
             });
             if(targets.length > 0) {
                 if(creep.transfer(targets[0], RESOURCE_ENERGY) == ERR_NOT_IN_RANGE) {
-                    creep.say('To Spawn')
+                    creep.say('To Spawn');
                     creep.moveTo(targets[0], {visualizePathStyle: {stroke: '#ffffff'}});
                 }else{
                     creep.say('Transfer');
