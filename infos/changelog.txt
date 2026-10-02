@@ -2,6 +2,7 @@
 - clear memory of dead creeps
 - build spawn manager
 - counting creeps
+- minimal creep count
 
 01.10.2026
 - restart new

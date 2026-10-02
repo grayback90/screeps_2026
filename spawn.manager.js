@@ -8,6 +8,11 @@
 *
 **********************************************/
 
+var minCreeps = {
+    harvester: 2,
+    upgrader: 1
+};
+
 var spawnManager = {
 
     run: function() {
@@ -15,7 +20,7 @@ var spawnManager = {
        var harvesters = _.filter(Game.creeps, (creep) => creep.memory.role == 'harvester');
        var upgraders = _.filter(Game.creeps, (creep) => creep.memory.role == 'upgrader');
 
-       console.log('Harvesters: ' + harvesters.length + ', Upgraders: ' + upgraders.length);
+       console.log('Harvesters: ' + harvesters.length + '/' + minCreeps.harvester + ', Upgraders: ' + upgraders.length + '/' + minCreeps.upgrader);
     }
 };
 
