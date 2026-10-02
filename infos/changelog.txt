@@ -1,8 +1,13 @@
+xx.xx.2027
+- 
+
 02.10.2026
 - clear memory of dead creeps
 - build spawn manager
 - counting creeps
 - minimal creep count
+- spawning creeps if necessary
+- logic if spawn is busy spawning
 
 01.10.2026
 - restart new
