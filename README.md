@@ -10,10 +10,6 @@ But from now on I will work alone on my AI and develop it further.
 - Screeps Documentation: https://docs.screeps.com/index.html
 - Screeps API Reference: https://docs.screeps.com/api/
 
-Currently working on:
-----
-- look at /infos/ToDo.txt
-
 Shoutout:
 ----
 - I startet with the code from 'th_pion'. (Thanks for the awesome tutorial man!)
