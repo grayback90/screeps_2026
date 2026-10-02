@@ -24,6 +24,13 @@ var spawnManager = {
 
     run: function() {
        var spawn = Game.spawns['Spawn1'];
+
+       //spawn busy?
+       if(spawn.spawning) {
+        console.log('Spawn is busy, spawning: ' + spawn.spawning.name);
+        return;
+       }
+
        var harvesters = _.filter(Game.creeps, (creep) => creep.memory.role == 'harvester');
        var upgraders = _.filter(Game.creeps, (creep) => creep.memory.role == 'upgrader');
 
