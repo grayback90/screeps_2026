@@ -9,6 +9,7 @@
 **********************************************/
 
 // import modules
+var spawnManager = require('spawn.manager');
 var roleHarvester = require('role.harvester');
 var roleUpgrader = require('role.upgrader');
 var roleBuilder = require('role.builder');
@@ -21,6 +22,9 @@ module.exports.loop = function () {
             delete Memory.creeps[name];
         }
     }
+
+    // run spawn manager
+    spawnManager.run();
 
     var tower = Game.getObjectById('TOWER_ID');
     if(tower) {
