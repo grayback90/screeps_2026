@@ -1,8 +1,8 @@
 /**********************************************
 *
 * file: main.js
-* date: 18.12.2025
-* version: 0.1
+* date: 02.10.2026
+* version: 0.2
 *
 * funtions: main logic
 *
@@ -14,6 +14,13 @@ var roleUpgrader = require('role.upgrader');
 var roleBuilder = require('role.builder');
 
 module.exports.loop = function () {
+
+    //clear memory of dead creeps
+    for(var name in Memory.creeps) {
+        if(!Game.creeps[name]) {
+            delete Memory.creeps[name];
+        }
+    }
 
     var tower = Game.getObjectById('TOWER_ID');
     if(tower) {
