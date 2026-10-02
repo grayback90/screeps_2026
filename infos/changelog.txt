@@ -8,6 +8,7 @@ xx.xx.2027
 - minimal creep count
 - spawning creeps if necessary
 - logic if spawn is busy spawning
+- harvester and upgrader can now speak
 
 01.10.2026
 - restart new
