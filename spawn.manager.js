@@ -26,13 +26,13 @@ var spawnManager = {
 
        if(missingHarvesters > 0) {
         //harvesters are missing, spawn a new one
-        cosole.log('Harvester missing, spawning a new one');
+        console.log('Harvester missing, spawning a new one');
         return;
        }
 
        if(missingUpgraders > 0) {
         //upgraders are missing, spawn a new one
-        cosole.log('Upgrader missing, spawning a new one');
+        console.log('Upgrader missing, spawning a new one');
         return;
        }
 
