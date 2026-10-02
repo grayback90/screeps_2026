@@ -2,7 +2,7 @@
 *
 * file: role.upgrader.js
 * date: 01.10.2026
-* version: 0.1
+* version: 0.2
 *
 * funtions: upgrades the roomcontroller
 *
@@ -32,8 +32,8 @@ var roleUpgrader = {
                 creep.say('Waiting');
             }
         } else {
-            var result = creep.harvest(sources[0]);
             var sources = creep.room.find(FIND_SOURCES);
+            var result = creep.harvest(sources[0]);
             if(result == ERR_NOT_IN_RANGE) {
                 creep.moveTo(sources[0], {visualizePathStyle: {stroke: '#ffaa00'}});
                 creep.say('To Source');
