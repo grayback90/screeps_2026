@@ -11,7 +11,11 @@
 var spawnManager = {
 
     run: function() {
-       console.log('spawn manager läuft')
+       var spawn = Game.spawns['Spawn1'];
+       var harvesters = _.filter(Game.creeps, (creep) => creep.memory.role == 'harvester');
+       var upgraders = _.filter(Game.creeps, (creep) => creep.memory.role == 'upgrader');
+
+       console.log('Harvesters: ' + harvesters.length + ', Upgraders: ' + upgraders.length);
     }
 };
 
