@@ -2,7 +2,7 @@
 *
 * file: spawn.manager.js
 * date: 02.10.2026
-* version: 0.2
+* version: 0.3
 *
 * funtions: manage the spawning of creeps
 *

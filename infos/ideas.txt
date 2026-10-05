@@ -1,7 +1,6 @@
 Ideas:
 ----
 - try to overcome the great filter (great-filter.txt)
-- give the screeps the "creep.say()" function -> so they tell me what are they doing/thinking
 - working with a defcon level like: https://arcath.net/2016/12/screeps-part-8-constructors-defcon
 - "panic-room" -> if the wall is broken, all creeps run to the panic-room and wait till the threat is over
 - modify "scout": dont come back if you get attacked or find other creeps, set "Gank Flag" and try to leave the room to search for more
@@ -9,7 +8,6 @@ Ideas:
 
 Roles that need to be implemented (priority is the order):
 ----
-- "builder" -> only spawns if there is a construction site, after building go upgrade till death
 - "wallRepairer" -> builds and repairs the walls
 - "claimer" -> claims a new room
 - "miniHarvester": -> needs only 200 energy, if all creeps die and not enough energy is stored
@@ -27,4 +25,3 @@ Army roles that need to be implemented:
 - "tank" -> high life, meele attacker
 - "ranger" -> ranged attacker, tries to stay behind tank or out of meele range
 - "healer" -> helas the other army-member
-- 

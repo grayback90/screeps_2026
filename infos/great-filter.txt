@@ -15,8 +15,8 @@
     b. Tasks/Goals
 
 2. Automatic Spawning
-    a. Headcount -> Done -> 02.10.207
-    b. Part-Count Balancing
+    a. Headcount -> Done -> 02.10.2027
+    b. Part-Count Balancing -> 05.10.2027
     c. Spawn Queues
     d. Cold-boot
 

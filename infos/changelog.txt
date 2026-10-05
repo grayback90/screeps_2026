@@ -3,6 +3,8 @@ xx.xx.2027
 
 05.10.2027
 - role builder
+- great filter (2b. Part-Count Balancing)
+- 
 
 02.10.2026
 - clear memory of dead creeps
