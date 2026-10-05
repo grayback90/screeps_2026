@@ -80,7 +80,7 @@ var spawnManager = {
             // no harvesters at all, spawn emergency harvester
             var body = buildBody(bodyPatterns.emergencyBody, energy, 1);
             var result = spawn.spawnCreep(body, 'EmergencyHarvester' + Game.time, {memory: {role: 'harvester'}});
-            console.log('COLD BOOT: Spwanning emergency harvester (' + body.length + ' parts): ' + result);
+            console.log('COLD BOOT: Spawning emergency harvester (' + body.length + ' parts): ' + result);
         } else {
             var body = buildBody(bodyPatterns.harvester, energy, maxRepeats.harvester);
             var result = spawn.spawnCreep(body, 'Harvester' + Game.time, {memory: {role: 'harvester'}});

@@ -18,7 +18,7 @@
     a. Headcount -> Done -> 02.10.2027
     b. Part-Count Balancing -> 05.10.2027
     c. Spawn Queues
-    d. Cold-boot
+    d. Cold-boot -> 05.10.2027
 
 3. Automatic Room Defense
     a. Tower Defense
