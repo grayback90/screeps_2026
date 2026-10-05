@@ -1,5 +1,5 @@
-xx.xx.2027
-- 
+05.10.2027
+- role builder
 
 02.10.2026
 - clear memory of dead creeps
