@@ -10,3 +10,4 @@
 
 system.setTickDuration(250) -> 4x faster game
 system.resetAllData() -> delete all and start new
+for(var n in Game.creeps) Game.creeps[n].suicide() -> kill all existing creeps

@@ -17,6 +17,9 @@ var minCreeps = {
  
 // body patterns for creeps (gets repeated as often as energy allows)
 var bodyPatterns = {
+    // emergency body pattern (used when energy is low)
+    emergencyBody: [WORK, CARRY, MOVE],
+    // normal body patterns
     harvester: [WORK, CARRY, MOVE],
     upgrader: [WORK, CARRY, MOVE],
     builder: [WORK, CARRY, MOVE]
@@ -73,9 +76,16 @@ var spawnManager = {
  
        if(missingHarvesters > 0) {
         //harvesters are missing, spawn a new one
-        var body = buildBody(bodyPatterns.harvester, energy, maxRepeats.harvester);
-        var result = spawn.spawnCreep(body, 'Harvester' + Game.time, {memory: {role: 'harvester'}});
-        console.log('Harvester missing, spawning a new one (' + body.length + ' parts): ' + result);
+        if(harvesters.length == 0) {
+            // no harvesters at all, spawn emergency harvester
+            var body = buildBody(bodyPatterns.emergencyBody, energy, 1);
+            var result = spawn.spawnCreep(body, 'EmergencyHarvester' + Game.time, {memory: {role: 'harvester'}});
+            console.log('COLD BOOT: Spwanning emergency harvester (' + body.length + ' parts): ' + result);
+        } else {
+            var body = buildBody(bodyPatterns.harvester, energy, maxRepeats.harvester);
+            var result = spawn.spawnCreep(body, 'Harvester' + Game.time, {memory: {role: 'harvester'}});
+            console.log('Harvester missing, spawning a new one (' + body.length + ' parts): ' + result);
+        }
         return;
        }
  
