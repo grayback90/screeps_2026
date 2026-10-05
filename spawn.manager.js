@@ -45,6 +45,7 @@ var spawnManager = {
 
        var missingHarvesters = minCreeps.harvester - harvesters.length;
        var missingUpgraders = minCreeps.upgrader - upgraders.length;
+       var missingBuilders = minCreeps.builder - builders.length;
 
        if(missingHarvesters > 0) {
         //harvesters are missing, spawn a new one
