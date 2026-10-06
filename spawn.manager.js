@@ -90,12 +90,13 @@ var spawnManager = {
             var body = buildBody(bodyPatterns.emergencyBody, energy, 1);
             var result = spawn.spawnCreep(body, 'EmergencyHarvester' + Game.time, {memory: {role: 'harvester'}});
             if(result == OK) {
-                logEvery('COLD BOOT: Spawning emergency harvester (' + body.length + ' parts): ' + result);
-            }        } else {
+                console.log('COLD BOOT: Spawning emergency harvester (' + body.length + ' parts): ' + result);
+            }        
+        } else {
             var body = buildBody(bodyPatterns.harvester, energy, maxRepeats.harvester);
             var result = spawn.spawnCreep(body, 'Harvester' + Game.time, {memory: {role: 'harvester'}});
             if(result == OK) {
-                logEvery('Harvester missing, spawning a new one (' + body.length + ' parts): ' + result);
+                console.log('Harvester missing, spawning a new one (' + body.length + ' parts): ' + result);
             }
         }
         return;
@@ -106,7 +107,7 @@ var spawnManager = {
         var body = buildBody(bodyPatterns.upgrader, energy, maxRepeats.upgrader);
         var result = spawn.spawnCreep(body, 'Upgrader' + Game.time, {memory: {role: 'upgrader'}});
         if(result == OK) {
-            logEvery('Upgrader missing, spawning a new one (' + body.length + ' parts): ' + result);
+            console.log('Upgrader missing, spawning a new one (' + body.length + ' parts): ' + result);
         }
         return;
        }
@@ -116,7 +117,7 @@ var spawnManager = {
         var body = buildBody(bodyPatterns.builder, energy, maxRepeats.builder);
         var result = spawn.spawnCreep(body, 'Builder' + Game.time, {memory: {role: 'builder'}});
         if(result == OK) {
-            logEvery('Builder missing, spawning a new one (' + body.length + ' parts): ' + result);
+            console.log('Builder missing, spawning a new one (' + body.length + ' parts): ' + result);
         }
         return;
        }
