@@ -104,7 +104,7 @@ var spawnManager = {
 
         //emergency spawn: if no harvesters are present, spawn an emergency harvester
         if(harvesters.length == 0) {
-            queue.push({role: 'harvester', priority: 0, emergency: true});
+            queue.push({role: 'EmergencyHarvester', priority: 0, emergency: true});
         }
 
         //sort the queue by priority
@@ -113,6 +113,44 @@ var spawnManager = {
         //log the queue
         logEvery('Spawn queue: ' + JSON.stringify(queue));
 
+        //working trough the queue and spawn creeps
+        if (queue.length == 0) {
+            //nothing to spawn
+            logEvery('Harvesters: ' + harvesters.length + '/' + creepRoles.harvester.min + ', Upgraders: ' + upgraders.length + '/' + creepRoles.upgrader.min + ', Builders: ' + builders.length + '/' + creepRoles.builder.min);
+            return;
+        } else {
+            //get the first item in the queue
+            var order = queue[0];
+            if(order.emergency) {
+                //spawn emergency harvester
+                var body = buildBody(bodyPatterns.emergencyBody, energy, 1);
+                var name = 'EmergencyHarvester' + Game.time;
+                var result = spawn.spawnCreep(body, name, {memory: {role: order.role}});
+                if(result == OK) {
+                    console.log('COLD BOOT: Spawning emergency harvester (' + body.length + ' parts): ' + result);
+                } else {
+                    logEvery('COLD BOOT: Failed to spawn emergency harvester (' + body.length + ' parts): ' + result);
+                }
+                return;
+            } else {
+                //spawn normal creep
+                var body = buildBody(creepRoles[order.role].pattern, energy, creepRoles[order.role].maxRepeats);
+                var roleName = order.role.charAt(0).toUpperCase() + order.role.slice(1);
+                var name = roleName + Game.time;
+                var result = spawn.spawnCreep(body, name, {memory: {role: order.role}});
+                if(result == OK) {
+                    console.log(roleName + ' missing, spawning a new one (' + body.length + ' parts): ' + result);
+                } else {
+                    logEvery(roleName + ' missing, failed to spawn a new one (' + body.length + ' parts): ' + result);
+                }
+                return;
+            }
+        }
+
+            
+
+        //old spawn logic
+        //will not be reached because of the return statements above, but kept for reference
         if(missingHarvesters > 0) {
             //harvesters are missing, spawn a new one
             if(harvesters.length == 0) {
