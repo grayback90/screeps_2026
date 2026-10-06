@@ -104,7 +104,7 @@ var spawnManager = {
 
         //emergency spawn: if no harvesters are present, spawn an emergency harvester
         if(harvesters.length == 0) {
-            queue.push({role: 'EmergencyHarvester', priority: 0, emergency: true});
+            queue.push({role: 'harvester', priority: 0, emergency: true});
         }
 
         //sort the queue by priority
