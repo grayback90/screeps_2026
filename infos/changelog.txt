@@ -1,10 +1,11 @@
-06.10.2027
+06.10.2026
 - little fixes 
     - to much logs
     - builder is now upgrader when idle
 - spawn queues
+- Version 1.0
 
-05.10.2027
+05.10.2026
 - role builder
 - great filter (2b. Part-Count Balancing)
 - cold-boot

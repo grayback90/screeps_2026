@@ -11,14 +11,14 @@
 **********************************************/
 
 1. Creep Management
-    a. Roles
-    b. Tasks/Goals
+    a. Roles -> 06.10.2026
+    b. Tasks/Goals -> xx.yy.2026
 
 2. Automatic Spawning -> DONE
-    a. Headcount -> Done -> 02.10.2027
-    b. Part-Count Balancing -> 05.10.2027
-    c. Spawn Queues -> 06.10.2027
-    d. Cold-boot -> 05.10.2027
+    a. Headcount -> Done -> 02.10.2026
+    b. Part-Count Balancing -> 05.10.2026
+    c. Spawn Queues -> 06.10.2026
+    d. Cold-boot -> 05.10.2026
 
 3. Automatic Room Defense
     a. Tower Defense
