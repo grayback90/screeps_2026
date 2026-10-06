@@ -22,14 +22,24 @@ var roleBuilder = {
         }
  
         if(creep.memory.building) {
-            // build
+            //search for construction sites
             var sites = creep.room.find(FIND_CONSTRUCTION_SITES);
- 
+            // if no construction sites are found, upgrade the controller instead
             if(sites.length == 0) {
-                creep.say('No Sites');
+                var result = creep.upgradeController(creep.room.controller);
+            
+                if(result == ERR_NOT_IN_RANGE) {
+                    creep.moveTo(creep.room.controller, {visualizePathStyle: {stroke: '#ffffff'}});
+                    creep.say('To Ctrl');
+                } else if(result == OK) {
+                    creep.say('Upgrading');
+                } else {
+                    creep.say('Waiting');
+                }
                 return;
             }
  
+            // build the first construction site found
             var result = creep.build(sites[0]);
             if(result == ERR_NOT_IN_RANGE) {
                 creep.moveTo(sites[0], {visualizePathStyle: {stroke: '#ffffff'}});

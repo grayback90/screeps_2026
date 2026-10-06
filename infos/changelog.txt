@@ -1,4 +1,7 @@
-xx.xx.2027
+06.10.2027
+- little fixes 
+    - to much logs
+    - builder is now upgrader when idle
 - spawn queues
 
 05.10.2027
