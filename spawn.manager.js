@@ -61,11 +61,16 @@ var spawnManager = {
     run: function() {
        var spawn = Game.spawns['Spawn1'];
         
-       //does the spawn exist?
-         if(!spawn) {
-            logEvery('Spawn not found!');
+        //does the spawn exist?
+        if(!spawn) {
+           logEvery('Spawn not found!');
+           return;
+        }
+
+        //spawn busy
+        if(spawn.spawning) {
             return;
-         }
+        }
  
        var harvesters = _.filter(Game.creeps, (creep) => creep.memory.role == 'harvester');
        var upgraders = _.filter(Game.creeps, (creep) => creep.memory.role == 'upgrader');
