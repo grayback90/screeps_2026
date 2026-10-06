@@ -22,16 +22,8 @@ var roleUpgrader = {
         }
 
         if(creep.memory.upgrading) {
-            var result = creep.upgradeController(creep.room.controller);
-            
-            if(result == ERR_NOT_IN_RANGE) {
-                creep.moveTo(creep.room.controller, {visualizePathStyle: {stroke: '#ffffff'}});
-                creep.say('To Ctrl');
-            } else if(result == OK) {
-                creep.say('Upgrading');
-            } else {
-                creep.say('Waiting');
-            }
+            //upgrade controller
+            tasks.upgrade(creep);
         } else {
             //harvest energy
             tasks.harvest(creep);

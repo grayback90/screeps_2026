@@ -28,29 +28,12 @@ var roleBuilder = {
             var sites = creep.room.find(FIND_CONSTRUCTION_SITES);
             // if no construction sites are found, upgrade the controller instead
             if(sites.length == 0) {
-                var result = creep.upgradeController(creep.room.controller);
-            
-                if(result == ERR_NOT_IN_RANGE) {
-                    creep.moveTo(creep.room.controller, {visualizePathStyle: {stroke: '#ffffff'}});
-                    creep.say('To Ctrl');
-                } else if(result == OK) {
-                    creep.say('Upgrading');
-                } else {
-                    creep.say('Waiting');
-                }
-                return;
+                //upgrade controller
+                tasks.upgrade(creep);
             }
  
             // build the first construction site found
-            var result = creep.build(sites[0]);
-            if(result == ERR_NOT_IN_RANGE) {
-                creep.moveTo(sites[0], {visualizePathStyle: {stroke: '#ffffff'}});
-                creep.say('To Site');
-            } else if(result == OK) {
-                creep.say('Building');
-            } else {
-                creep.say('Waiting');
-            }
+            tasks.build(creep);
         } else {
             // harvest energy
             tasks.harvest(creep);
