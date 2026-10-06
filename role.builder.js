@@ -2,7 +2,7 @@
 *
 * file: role.builder.js
 * date: 05.10.2026
-* version: 0.1
+* version: 1.0.0
 *
 * funtions: builder harvests energy and builds construction sites
 *

@@ -14,10 +14,10 @@
     a. Roles
     b. Tasks/Goals
 
-2. Automatic Spawning
+2. Automatic Spawning -> DONE
     a. Headcount -> Done -> 02.10.2027
     b. Part-Count Balancing -> 05.10.2027
-    c. Spawn Queues
+    c. Spawn Queues -> 06.10.2027
     d. Cold-boot -> 05.10.2027
 
 3. Automatic Room Defense

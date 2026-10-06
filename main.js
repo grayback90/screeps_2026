@@ -2,7 +2,7 @@
 *
 * file: main.js
 * date: 02.10.2026
-* version: 0.3
+* version: 1.0.0
 *
 * funtions: main logic
 *
