@@ -89,11 +89,14 @@ var spawnManager = {
             // no harvesters at all, spawn emergency harvester
             var body = buildBody(bodyPatterns.emergencyBody, energy, 1);
             var result = spawn.spawnCreep(body, 'EmergencyHarvester' + Game.time, {memory: {role: 'harvester'}});
-            logEvery('COLD BOOT: Spawning emergency harvester (' + body.length + ' parts): ' + result);
-        } else {
+            if(result == OK) {
+                logEvery('COLD BOOT: Spawning emergency harvester (' + body.length + ' parts): ' + result);
+            }        } else {
             var body = buildBody(bodyPatterns.harvester, energy, maxRepeats.harvester);
             var result = spawn.spawnCreep(body, 'Harvester' + Game.time, {memory: {role: 'harvester'}});
-            logEvery('Harvester missing, spawning a new one (' + body.length + ' parts): ' + result);
+            if(result == OK) {
+                logEvery('Harvester missing, spawning a new one (' + body.length + ' parts): ' + result);
+            }
         }
         return;
        }
@@ -102,7 +105,9 @@ var spawnManager = {
         //upgraders are missing, spawn a new one
         var body = buildBody(bodyPatterns.upgrader, energy, maxRepeats.upgrader);
         var result = spawn.spawnCreep(body, 'Upgrader' + Game.time, {memory: {role: 'upgrader'}});
-        logEvery('Upgrader missing, spawning a new one (' + body.length + ' parts): ' + result);
+        if(result == OK) {
+            logEvery('Upgrader missing, spawning a new one (' + body.length + ' parts): ' + result);
+        }
         return;
        }
  
@@ -110,7 +115,9 @@ var spawnManager = {
         //builders are missing, spawn a new one
         var body = buildBody(bodyPatterns.builder, energy, maxRepeats.builder);
         var result = spawn.spawnCreep(body, 'Builder' + Game.time, {memory: {role: 'builder'}});
-        logEvery('Builder missing, spawning a new one (' + body.length + ' parts): ' + result);
+        if(result == OK) {
+            logEvery('Builder missing, spawning a new one (' + body.length + ' parts): ' + result);
+        }
         return;
        }
  
