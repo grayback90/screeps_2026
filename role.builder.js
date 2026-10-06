@@ -2,9 +2,10 @@
 *
 * file: role.builder.js
 * date: 05.10.2026
-* version: 1.0.1
+* version: 1.0.2
 *
 * funtions: builder harvests energy and builds construction sites
+*           upgrades the controller if there is nothing to build
 *
 **********************************************/
 
@@ -24,16 +25,10 @@ var roleBuilder = {
         }
  
         if(creep.memory.building) {
-            //search for construction sites
-            var sites = creep.room.find(FIND_CONSTRUCTION_SITES);
-            // if no construction sites are found, upgrade the controller instead
-            if(sites.length == 0) {
-                //upgrade controller
+            // build, if there is nothing to build: upgrade the controller instead
+            if(!tasks.build(creep)) {
                 tasks.upgrade(creep);
             }
- 
-            // build the first construction site found
-            tasks.build(creep);
         } else {
             // harvest energy
             tasks.harvest(creep);

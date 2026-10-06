@@ -2,7 +2,7 @@
 *
 * file: tasks.js
 * date: 06.10.2026
-* version: 0.1.0
+* version: 0.1.1
 *
 * funtions: define tasks for creeps
 *
@@ -32,7 +32,12 @@ var tasks = {
             creep.say('Waiting');
         }
     },
+    // returns false if there is nothing to build, otherwise true
     build: function(creep) {
+        var sites = creep.room.find(FIND_CONSTRUCTION_SITES);
+        if(sites.length == 0) {
+            return false;
+        }
         var result = creep.build(sites[0]);
         if(result == ERR_NOT_IN_RANGE) {
             creep.moveTo(sites[0], {visualizePathStyle: {stroke: '#ffffff'}});
@@ -42,7 +47,9 @@ var tasks = {
         } else {
             creep.say('Waiting');
         }
+        return true;
     },
+    // returns false if there is nothing to fill, otherwise true
     deliver: function(creep) {
         var targets = creep.room.find(FIND_STRUCTURES, {
             filter: (structure) => {
@@ -52,17 +59,18 @@ var tasks = {
                         structure.store.getFreeCapacity(RESOURCE_ENERGY) > 0;
             }
         });
-        if(targets.length > 0) {
-            var result = creep.transfer(targets[0], RESOURCE_ENERGY);
-            if(result == ERR_NOT_IN_RANGE) {
-                creep.say('To Spawn');
-                creep.moveTo(targets[0], {visualizePathStyle: {stroke: '#ffffff'}});
-            }else{
-                creep.say('Transfer');
-            }
-        }else{
+        if(targets.length == 0) {
             creep.say('Idle');
+            return false;
         }
+        var result = creep.transfer(targets[0], RESOURCE_ENERGY);
+        if(result == ERR_NOT_IN_RANGE) {
+            creep.say('To Spawn');
+            creep.moveTo(targets[0], {visualizePathStyle: {stroke: '#ffffff'}});
+        } else {
+            creep.say('Transfer');
+        }
+        return true;
     }
 };
 
