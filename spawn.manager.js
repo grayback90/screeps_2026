@@ -32,6 +32,14 @@ var maxRepeats = {
     builder: 3
 };
 
+// spawn queue
+// priority of the roles (lower number = higher priority)
+var creepRoles = {
+    harvester: { min: 2, pattern: [WORK, CARRY, MOVE], maxRepeats: 3, priority: 1 },
+    upgrader: { min: 1, pattern: [WORK, CARRY, MOVE], maxRepeats: 3, priority: 2 },
+    builder: { min: 1, pattern: [WORK, CARRY, MOVE], maxRepeats: 3, priority: 3 }
+};
+
 // builds a body: repeats the pattern as often as energy and maxRepeats allow
 function buildBody(pattern, energy, maxRepeats) {
     var cost = 0;
