@@ -2,7 +2,7 @@
 *
 * file: role.harvester.js
 * date: 01.10.2026
-* version: 1.0.0
+* version: 1.0.1
 *
 * funtions: harvest the source in the
 *           spawn room and fills the
@@ -10,21 +10,15 @@
 *
 **********************************************/
 
+var tasks = require('tasks');
+
 var roleHarvester = {
 
     /** @param {Creep} creep **/
     run: function(creep) {
         if(creep.store.getFreeCapacity() > 0) {
-            var sources = creep.room.find(FIND_SOURCES);
-            var result = creep.harvest(sources[0]);
-            if(result == ERR_NOT_IN_RANGE) {
-                creep.say('To Source');
-                creep.moveTo(sources[0], {visualizePathStyle: {stroke: '#ffaa00'}});
-            } else if (result == OK) {
-                creep.say('Harvest');
-            }else{
-                creep.say('Waiting');
-            }
+            // harvest energy
+            tasks.harvest(creep);
         }
         else {
             var targets = creep.room.find(FIND_STRUCTURES, {

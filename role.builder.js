@@ -2,12 +2,14 @@
 *
 * file: role.builder.js
 * date: 05.10.2026
-* version: 1.0.0
+* version: 1.0.1
 *
 * funtions: builder harvests energy and builds construction sites
 *
 **********************************************/
- 
+
+var tasks = require('tasks');
+
 var roleBuilder = {
  
     /** @param {Creep} creep **/
@@ -50,18 +52,8 @@ var roleBuilder = {
                 creep.say('Waiting');
             }
         } else {
-            // harvest
-            var sources = creep.room.find(FIND_SOURCES);
-            var result = creep.harvest(sources[0]);
- 
-            if(result == ERR_NOT_IN_RANGE) {
-                creep.moveTo(sources[0], {visualizePathStyle: {stroke: '#ffaa00'}});
-                creep.say('To Source');
-            } else if(result == OK) {
-                creep.say('Harvesting');
-            } else {
-                creep.say('Waiting');
-            }
+            // harvest energy
+            tasks.harvest(creep);
         }
     }
 };

@@ -2,11 +2,12 @@
 *
 * file: role.upgrader.js
 * date: 01.10.2026
-* version: 1.0.0
+* version: 1.0.1
 *
 * funtions: upgrades the roomcontroller
 *
 **********************************************/
+var tasks = require('tasks');
 
 var roleUpgrader = {
 
@@ -32,16 +33,8 @@ var roleUpgrader = {
                 creep.say('Waiting');
             }
         } else {
-            var sources = creep.room.find(FIND_SOURCES);
-            var result = creep.harvest(sources[0]);
-            if(result == ERR_NOT_IN_RANGE) {
-                creep.moveTo(sources[0], {visualizePathStyle: {stroke: '#ffaa00'}});
-                creep.say('To Source');
-            } else if (result == OK) {
-                creep.say('Harvesting');
-            } else {
-                creep.say('Waiting');
-            }
+            //harvest energy
+            tasks.harvest(creep);
         }
     }
 };

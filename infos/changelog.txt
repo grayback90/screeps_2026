@@ -4,6 +4,7 @@
     - builder is now upgrader when idle
 - spawn queues
 - Version 1.0
+- beginning with tasks
 
 05.10.2026
 - role builder
