@@ -20,7 +20,10 @@ var tasks = {
         } else {
             creep.say('Waiting');
         }
-    }
+    },
+    upgrade: function(creep) {},
+    build: function(creep) {},
+    deliver: function(creep) {}
 };
 
 module.exports = tasks;
