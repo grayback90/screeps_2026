@@ -2,7 +2,7 @@
 *
 * file: tasks.js
 * date: 06.10.2026
-* version: 0.5.0
+* version: 1.0.0
 *
 * funtions: define tasks for creeps
 *
@@ -68,6 +68,38 @@ function getSite(creep) {
     return closest;
 }
 
+//returns the target a creep should deliver energy to
+//reuses the target from the creep's memory, otherwise picks the closest spawn or extension that is not full
+function getDeliverTarget(creep) {
+    //try to get the target that is saved in the creep's memory
+    var deliverTarget = Game.getObjectById(creep.memory.deliverTargetId);
+    //the creep already has a target, use it if it is not full
+    if(deliverTarget && deliverTarget.store.getFreeCapacity(RESOURCE_ENERGY) > 0) {
+        //return the target from memory
+        return deliverTarget;
+    }
+
+    //no target in memory (or it is full), find the closest spawn or extension that is not full
+    var targets = creep.pos.findClosestByRange(FIND_STRUCTURES, {
+        filter: (structure) => {
+            return (structure.structureType == STRUCTURE_EXTENSION ||
+                    structure.structureType == STRUCTURE_SPAWN ||
+                    structure.structureType == STRUCTURE_TOWER) &&
+                    structure.store.getFreeCapacity(RESOURCE_ENERGY) > 0;
+        }
+    });
+
+    //there is no spawn or extension that is not full, nothing to deliver to
+    if (!targets) {
+        return null;
+    } else {
+        //save the chosen target in the creep's memory for the next ticks
+        creep.memory.deliverTargetId = targets.id;
+    }
+    //return the chosen target
+    return targets;
+}
+
 var tasks = {
     //switches between harvest and the work task of a role (empty -> harvest, full -> work)
     switchTask: function(creep, workTask) {
@@ -127,24 +159,17 @@ var tasks = {
         }
         return true;
     },
-    //delivers energy to the first spawn or extension that is not full, returns false if there is nothing to deliver to
+    //delivers energy to the closest spawn or extension that is not full, returns false if there is nothing to deliver to
     deliver: function(creep) {
-        var targets = creep.room.find(FIND_STRUCTURES, {
-            filter: (structure) => {
-                return (structure.structureType == STRUCTURE_EXTENSION ||
-                        structure.structureType == STRUCTURE_SPAWN ||
-                        structure.structureType == STRUCTURE_TOWER) &&
-                        structure.store.getFreeCapacity(RESOURCE_ENERGY) > 0;
-            }
-        });
-        if(targets.length == 0) {
+        var target = getDeliverTarget(creep);
+        if(!target) {
             creep.say('Idle');
             return false;
         }
-        var result = creep.transfer(targets[0], RESOURCE_ENERGY);
+        var result = creep.transfer(target, RESOURCE_ENERGY);
         if(result == ERR_NOT_IN_RANGE) {
             creep.say('To Spawn');
-            creep.moveTo(targets[0], {visualizePathStyle: {stroke: '#ffffff'}});
+            creep.moveTo(target, {visualizePathStyle: {stroke: '#ffffff'}});
         } else {
             creep.say('Transfer');
         }

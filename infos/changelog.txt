@@ -1,5 +1,5 @@
 07.10.2026
-- finished the tasks.js
+- finished the tasks.js with goals
 - 
 
 06.10.2026
