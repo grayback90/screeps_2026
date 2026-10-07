@@ -17,20 +17,15 @@ var roleBuilder = {
     run: function(creep) {
  
         // switch state: empty -> harvest, full -> build
-        if(creep.memory.building && creep.store[RESOURCE_ENERGY] == 0) {
-            creep.memory.building = false;
-        }
-        if(!creep.memory.building && creep.store.getFreeCapacity() == 0) {
-            creep.memory.building = true;
-        }
+        tasks.switchTask(creep, 'build');
  
-        if(creep.memory.building) {
-            // build, if there is nothing to build: upgrade the controller instead
+        if(cpreep.memory.task == 'build') {
+            //build, if there is nothing to build: upgrade the controller instead
             if(!tasks.build(creep)) {
                 tasks.upgrade(creep);
             }
         } else {
-            // harvest energy
+            //harvest energy
             tasks.harvest(creep);
         }
     }

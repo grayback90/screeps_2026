@@ -2,13 +2,26 @@
 *
 * file: tasks.js
 * date: 06.10.2026
-* version: 0.1.1
+* version: 0.2.0
 *
 * funtions: define tasks for creeps
 *
 **********************************************/
 
 var tasks = {
+    //switches between harvest and the work task of a role (empty -> harvest, full -> work)
+    switchTask: function(creep, workTask) {
+        if(!creep.memory.task) {
+            creep.memory.task = 'harvest';
+        }
+        if(creep.memory.task == workTask && creep.store[RESOURCE_ENERGY] == 0) {
+            creep.memory.task = 'harvest';
+        }
+        if(creep.memory.task != workTask && creep.store.getFreeCapacity() == 0) {
+            creep.memory.task = workTask;
+        }
+    },
+    //harvests the first source in the room
     harvest: function(creep) {
         var sources = creep.room.find(FIND_SOURCES);
         var result = creep.harvest(sources[0]);
@@ -21,6 +34,7 @@ var tasks = {
             creep.say('Waiting');
         }
     },
+    //upgrades the roomcontroller
     upgrade: function(creep) {
         var result = creep.upgradeController(creep.room.controller);
         if(result == ERR_NOT_IN_RANGE) {
@@ -32,7 +46,7 @@ var tasks = {
             creep.say('Waiting');
         }
     },
-    // returns false if there is nothing to build, otherwise true
+    //builds the first construction site, returns false if there is nothing to build
     build: function(creep) {
         var sites = creep.room.find(FIND_CONSTRUCTION_SITES);
         if(sites.length == 0) {
@@ -49,7 +63,7 @@ var tasks = {
         }
         return true;
     },
-    // returns false if there is nothing to fill, otherwise true
+    //delivers energy to the first spawn or extension that is not full, returns false if there is nothing to deliver to
     deliver: function(creep) {
         var targets = creep.room.find(FIND_STRUCTURES, {
             filter: (structure) => {

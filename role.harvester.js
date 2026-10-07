@@ -16,14 +16,12 @@ var roleHarvester = {
 
     /** @param {Creep} creep **/
     run: function(creep) {
-        if(creep.store.getFreeCapacity() > 0) {
-            // harvest energy
-            tasks.harvest(creep);
-        }
-        else {
-            // deliver energy to spawn and extensions
-            tasks.deliver(creep);
-        }
+        
+        //switch state: empty -> harvest, full -> deliver
+        tasks.switchTask(creep, 'deliver');
+        
+        //execute the task defined in creep.memory.task
+        tasks[creep.memory.task](creep);
     }
 };
 
