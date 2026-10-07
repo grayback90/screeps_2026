@@ -4,6 +4,7 @@
 07.10.2026
 - finished the tasks.js with goals
 - startet with great filter 3 (defence)
+    - recognize a threat in my room
 
 06.10.2026
 - little fixes 

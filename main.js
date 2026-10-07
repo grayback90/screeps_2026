@@ -2,7 +2,7 @@
 *
 * file: main.js
 * date: 02.10.2026
-* version: 1.0.0
+* version: 1.1.0
 *
 * funtions: main logic
 *
@@ -13,6 +13,7 @@ var spawnManager = require('spawn.manager');
 var roleHarvester = require('role.harvester');
 var roleUpgrader = require('role.upgrader');
 var roleBuilder = require('role.builder');
+var defense = require('defense');
 
 module.exports.loop = function () {
 
@@ -25,6 +26,9 @@ module.exports.loop = function () {
 
     //run spawn manager
     spawnManager.run();
+
+    //run defense logic
+    defense.run();
 
     var tower = Game.getObjectById('TOWER_ID');
     if(tower) {
