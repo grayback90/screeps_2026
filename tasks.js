@@ -2,11 +2,49 @@
 *
 * file: tasks.js
 * date: 06.10.2026
-* version: 0.3.0
+* version: 0.4.0
 *
 * funtions: define tasks for creeps
 *
 **********************************************/
+
+// returns the source a creep should harvest from
+// reuses the source from the creep's memory, otherwise picks the source with the fewest creeps
+function getSource(creep) {
+    // try to get the source that is saved in the creep's memory
+    var source = Game.getObjectById(creep.memory.sourceId);
+    // the creep already has a source, use it
+    if(source) {
+        return source;
+    }
+
+    // no source in memory yet, get all sources of the room
+    var sources = creep.room.find(FIND_SOURCES);
+    // there is no source in this room, nothing to harvest
+    if(sources.length == 0) {
+        return null;
+    }
+
+    // best = source with the fewest creeps so far
+    // bestCount starts very high, so the first source is always better
+    var best = null;
+    var bestCount = Infinity;
+    // check every source in the room
+    for(var i = 0; i < sources.length; i++) {
+        // count how many creeps already harvest from this source
+        var count = _.filter(Game.creeps, (c) => c.memory.sourceId == sources[i].id).length;
+        // fewer creeps than the best source so far -> this is the new best
+        if(count < bestCount) {
+            best = sources[i];
+            bestCount = count;
+        }
+    }
+    // save the chosen source in the creep's memory for the next ticks
+    creep.memory.sourceId = best.id;
+    // return the chosen source
+    return best;
+}
+
 
 var tasks = {
     //switches between harvest and the work task of a role (empty -> harvest, full -> work)
@@ -21,12 +59,16 @@ var tasks = {
             creep.memory.task = workTask;
         }
     },
-    //harvests the first source in the room
+    //harvests the best source in the room (nearest source with the fewest creeps harvesting from it)
     harvest: function(creep) {
-        var sources = creep.room.find(FIND_SOURCES);
-        var result = creep.harvest(sources[0]);
+        var source = getSource(creep);
+        if(!source) {
+            creep.say('No Source');
+            return;
+        }
+        var result = creep.harvest(source);
         if(result == ERR_NOT_IN_RANGE) {
-            creep.moveTo(sources[0], {visualizePathStyle: {stroke: '#ffaa00'}});
+            creep.moveTo(source, {visualizePathStyle: {stroke: '#ffaa00'}});
             creep.say('To Source');
         } else if (result == OK) {
             creep.say('Harvesting');
