@@ -69,7 +69,7 @@ function getSite(creep) {
 }
 
 //returns the target a creep should deliver energy to
-//reuses the target from the creep's memory, otherwise picks the closest spawn or extension that is not full
+//reuses the target from the creep's memory, otherwise picks the closest spawn, tower or extension that is not full
 function getDeliverTarget(creep) {
     //try to get the target that is saved in the creep's memory
     var deliverTarget = Game.getObjectById(creep.memory.deliverTargetId);
@@ -79,8 +79,8 @@ function getDeliverTarget(creep) {
         return deliverTarget;
     }
 
-    //no target in memory (or it is full), find the closest spawn or extension that is not full
-    var targets = creep.pos.findClosestByRange(FIND_STRUCTURES, {
+    //no target in memory (or it is full), find the closest spawn, tower or extension that is not full
+    var closest = creep.pos.findClosestByRange(FIND_STRUCTURES, {
         filter: (structure) => {
             return (structure.structureType == STRUCTURE_EXTENSION ||
                     structure.structureType == STRUCTURE_SPAWN ||
@@ -90,14 +90,14 @@ function getDeliverTarget(creep) {
     });
 
     //there is no spawn or extension that is not full, nothing to deliver to
-    if (!targets) {
+    if (!closest) {
         return null;
-    } else {
-        //save the chosen target in the creep's memory for the next ticks
-        creep.memory.deliverTargetId = targets.id;
     }
+    
+    //save the chosen target in the creep's memory for the next ticks
+    creep.memory.deliverTargetId = closest.id;
     //return the chosen target
-    return targets;
+    return closest;
 }
 
 var tasks = {

@@ -21,7 +21,7 @@
     d. Cold-boot -> 05.10.2026
 
 3. Automatic Room Defense
-    a. Tower Defense
+    a. Tower Defense ->
     b. Creep Based-Defense
         x. Rampart-Defenders
         y. Repair spam
