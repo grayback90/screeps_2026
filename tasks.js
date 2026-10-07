@@ -45,7 +45,8 @@ function getSource(creep) {
     return best;
 }
 
-//returns the site a creep should build
+//returns the construction site a creep should build
+//reuses the site from the creep's memory, otherwise picks the closest site
 function getSite(creep) {
     //try to get the site that is saved in the creep's memory
     var site = Game.getObjectById(creep.memory.siteId);
@@ -54,19 +55,18 @@ function getSite(creep) {
         return site;
     }
 
-    //no site in memory yet, get all sites of the room
-    var sites = creep.pos.findClosestByRange(FIND_CONSTRUCTION_SITES);
-    //there is no site in this room, nothing to build
-    if(!sites) {
+    //no site in memory (or it is finished), find the closest site
+    var closest = creep.pos.findClosestByRange(FIND_CONSTRUCTION_SITES);
+    //there is no construction site in this room, nothing to build
+    if(!closest) {
         return null;
-    } else {
-        //save the chosen site in the creep's memory for the next ticks
-        creep.memory.siteId = site.id;
     }
-    //return the first site
-    return sites;
-}
 
+    //save the chosen site in the creep's memory for the next ticks
+    creep.memory.siteId = closest.id;
+    //return the chosen site
+    return closest;
+}
 
 var tasks = {
     //switches between harvest and the work task of a role (empty -> harvest, full -> work)
