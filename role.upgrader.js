@@ -14,10 +14,10 @@ var roleUpgrader = {
     /** @param {Creep} creep **/
     run: function(creep) {
 
-        // switch task: empty -> harvest, full -> upgrade
+        //switch task: empty -> harvest, full -> upgrade
         tasks.switchTask(creep, 'upgrade');
 
-        // run the current task
+        //run the current task
         tasks[creep.memory.task](creep);
     }
 };

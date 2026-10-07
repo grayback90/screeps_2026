@@ -8,21 +8,21 @@
 *
 **********************************************/
  
-// body patterns for creeps (gets repeated as often as energy allows)
+//body patterns for creeps (gets repeated as often as energy allows)
 var bodyPatterns = {
-    // emergency body pattern (used when energy is low)
+    //emergency body pattern (used when energy is low)
     emergencyBody: [WORK, CARRY, MOVE],
 };
 
-// spawn queue
-// priority of the roles (lower number = higher priority)
+//spawn queue
+//priority of the roles (lower number = higher priority)
 var creepRoles = {
     harvester: { min: 2, pattern: [WORK, CARRY, MOVE], maxRepeats: 3, priority: 1 },
     upgrader: { min: 1, pattern: [WORK, CARRY, MOVE], maxRepeats: 3, priority: 2 },
     builder: { min: 1, pattern: [WORK, CARRY, MOVE], maxRepeats: 3, priority: 3 }
 };
 
-// builds a body: repeats the pattern as often as energy and maxRepeats allow
+//builds a body: repeats the pattern as often as energy and maxRepeats allow
 function buildBody(pattern, energy, maxRepeats) {
     var cost = 0;
     for(var i = 0; i < pattern.length; i++) {
@@ -36,10 +36,10 @@ function buildBody(pattern, energy, maxRepeats) {
     return body;
 }
 
-// log interval in ticks
+//log interval in ticks
 var LOG_INTERVAL = 20;
 
-// logs a message every LOG_INTERVAL ticks
+//logs a message every LOG_INTERVAL ticks
 function logEvery(message) {
     if(Game.time % LOG_INTERVAL == 0) {
         console.log(message);

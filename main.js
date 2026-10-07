@@ -23,7 +23,7 @@ module.exports.loop = function () {
         }
     }
 
-    // run spawn manager
+    //run spawn manager
     spawnManager.run();
 
     var tower = Game.getObjectById('TOWER_ID');

@@ -2,7 +2,7 @@
 *
 * file: role.harvester.js
 * date: 01.10.2026
-* version: 1.0.1
+* version: 1.1.0
 *
 * funtions: harvest the source in the
 *           spawn room and fills the
@@ -17,7 +17,7 @@ var roleHarvester = {
     /** @param {Creep} creep **/
     run: function(creep) {
         
-        //switch state: empty -> harvest, full -> deliver
+        //switch task: empty -> harvest, full -> deliver
         tasks.switchTask(creep, 'deliver');
         
         //execute the task defined in creep.memory.task
