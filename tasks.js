@@ -2,11 +2,16 @@
 *
 * file: tasks.js
 * date: 06.10.2026
-* version: 1.0.0
+* version: 1.1.0
 *
 * funtions: define tasks for creeps
 *
 **********************************************/
+
+//constants
+//tower is full if he has more than 90% energy, then he can be fed by a creep
+var TOWER_FILL_LIMIT = 0.9;
+
 
 //returns the source a creep should harvest from
 //reuses the source from the creep's memory, otherwise picks the source with the fewest creeps
@@ -100,6 +105,47 @@ function getDeliverTarget(creep) {
     return closest;
 }
 
+//returns a tower that a creep should feed with energy
+//reuses the tower from the creep's memory, otherwise picks the closest tower that is not full
+function getTowerFeedTarget(creep) {
+    //try to get the tower that is saved in the creep's memory
+    var towerTarget = Game.getObjectById(creep.memory.towerFeedTargetId);
+    //the creep already has a tower, use it if it is not full
+    if(towerTarget && towerTarget.store[RESOURCE_ENERGY] < towerTarget.store.getCapacity(RESOURCE_ENERGY) * TOWER_FILL_LIMIT) {
+        //return the tower from memory
+        return towerTarget;
+    }
+
+    //no tower in memory (or it is full), find the tower with the lowest energy that is not full
+    var towers = creep.room.find(FIND_MY_STRUCTURES, {
+        filter: (structure) => structure.structureType == STRUCTURE_TOWER && structure.store[RESOURCE_ENERGY] < structure.store.getCapacity(RESOURCE_ENERGY) * TOWER_FILL_LIMIT
+    });
+    //there is no tower that needs to be filled
+    if(!towers) {
+        return null;
+    }
+
+    //save the tower with lowest energy in memory
+    //bestTower = tower with the lowest energy so far
+    //bestEnergy starts very high, so the first tower with lower energy is always better
+    var bestTower = null;
+    var bestEnergy = Infinity;
+    //check every tower in the room
+    for(var i = 0; i < towers.length; i++) {
+        //checks the energy of every tower in the room
+        var energy = towers[i].store[RESOURCE_ENERGY];
+        //fewer energy than the lowest energy so far -> this is the new bestEnergy
+        if(energy < bestEnergy) {
+            bestTower = towers[i];
+            bestEnergy = energy;
+        }
+    }
+    //save the chosen tower in the creep's memory for the next ticks
+    creep.memory.sourceId = bestTower.id;
+    //return the chosen tower
+    return bestTower;
+}
+
 var tasks = {
     //switches between harvest and the work task of a role (empty -> harvest, full -> work)
     switchTask: function(creep, workTask) {
@@ -172,6 +218,26 @@ var tasks = {
             creep.moveTo(target, {visualizePathStyle: {stroke: '#ffffff'}});
         } else {
             creep.say('Transfer');
+        }
+        return true;
+    },
+    //feed the towers if they need to be feed
+    //function returns false if all towers are full
+    feedTower: function(creep) {
+        //get target to feed
+        var target = getTowerFeedTarget(creep);
+        //there is no target to feed
+        if(!targetToFeed) {
+            return false;
+        }
+
+        //feed the tower
+        var result = creep.transfer(tower, RESOURCE_ENERGY);
+        if(result == ERR_NOT_IN_RANGE) {
+            creep.say('To Tower');
+            creep.moveTo(target, {visualizePathStyle: {stroke: '#ffffff'}});
+        } else {
+            creep.say('Feeding');
         }
         return true;
     }
