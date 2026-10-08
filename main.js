@@ -13,7 +13,7 @@ var spawnManager = require('spawn.manager');
 var roleHarvester = require('role.harvester');
 var roleUpgrader = require('role.upgrader');
 var roleBuilder = require('role.builder');
-var roleTowerFeeder = require('role.towerFeeder');
+var roleTowerFeeder = require('role.towerfeeder');
 var defense = require('defense');
 var towerManager = require('tower.manager');
 

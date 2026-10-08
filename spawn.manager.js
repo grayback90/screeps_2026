@@ -14,12 +14,22 @@ var bodyPatterns = {
     emergencyBody: [WORK, CARRY, MOVE],
 };
 
+//helper function to check if there are tower in the room
+function towersInTheRoom(room) {
+    var towers = room.find(FIND_MY_STRUCTURES, {filter: (structure) => structure.structureType == STRUCTURE_TOWER});
+    if(towers.length > 0) {
+        return true
+    }
+}
+
 //spawn queue
 //priority of the roles (lower number = higher priority)
 var creepRoles = {
-    harvester: { min: 2, pattern: [WORK, CARRY, MOVE], maxRepeats: 3, priority: 1 },
-    upgrader: { min: 1, pattern: [WORK, CARRY, MOVE], maxRepeats: 3, priority: 2 },
-    builder: { min: 1, pattern: [WORK, CARRY, MOVE], maxRepeats: 3, priority: 3 }
+    harvester: { min: 2, pattern: [WORK, CARRY, MOVE], maxRepeats: 3, priority: 1, condition: true },
+    //condition to spawn towerFeeder: towers in the room > 0
+    towerFeeder: { min: 1, pattern: [WORK, CARRY, MOVE], maxRepeats: 3, priority: 2, condition: towersInTheRoom },
+    upgrader: { min: 1, pattern: [WORK, CARRY, MOVE], maxRepeats: 3, priority: 3, condition: true },
+    builder: { min: 1, pattern: [WORK, CARRY, MOVE], maxRepeats: 3, priority: 4, condition: true }
 };
 
 //builds a body: repeats the pattern as often as energy and maxRepeats allow
