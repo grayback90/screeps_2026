@@ -50,8 +50,10 @@ var towerManager = {
                 var closestFriendly = tower.pos.findClosestByRange(FIND_MY_CREEPS, {
                     filter: (friendly) => friendly.hits < friendly.hitsMax
                 });
-                tower.heal(closestFriendly);
-                continue;
+                if(closestFriendly) {
+                    tower.heal(closestFriendly);
+                    continue;
+                }
 
                 //repair closest structure (road or container) if it is damaged
                 //only repair if tower has more than 60% energy
@@ -61,6 +63,7 @@ var towerManager = {
                     });
                     if(closestDamagedStructure) {
                         tower.repair(closestDamagedStructure);
+                        continue;
                     }
                 }
 
