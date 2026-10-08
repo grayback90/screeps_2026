@@ -2,7 +2,7 @@
 *
 * file: main.js
 * date: 02.10.2026
-* version: 1.1.0
+* version: 1.2.0
 *
 * funtions: main logic
 *
@@ -14,6 +14,7 @@ var roleHarvester = require('role.harvester');
 var roleUpgrader = require('role.upgrader');
 var roleBuilder = require('role.builder');
 var defense = require('defense');
+var towerManager = require('tower.manager');
 
 module.exports.loop = function () {
 
@@ -24,26 +25,14 @@ module.exports.loop = function () {
         }
     }
 
-    //run spawn manager
-    spawnManager.run();
-
     //run defense logic
     defense.run();
 
-    var tower = Game.getObjectById('TOWER_ID');
-    if(tower) {
-        var closestDamagedStructure = tower.pos.findClosestByRange(FIND_STRUCTURES, {
-            filter: (structure) => structure.hits < structure.hitsMax
-        });
-        if(closestDamagedStructure) {
-            tower.repair(closestDamagedStructure);
-        }
+    //run tower manager
+    towerManager.run();
 
-        var closestHostile = tower.pos.findClosestByRange(FIND_HOSTILE_CREEPS);
-        if(closestHostile) {
-            tower.attack(closestHostile);
-        }
-    }
+    //run spawn manager
+    spawnManager.run();
 
     for(var name in Game.creeps) {
         var creep = Game.creeps[name];
