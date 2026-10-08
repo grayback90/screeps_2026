@@ -121,7 +121,7 @@ function getTowerFeedTarget(creep) {
         filter: (structure) => structure.structureType == STRUCTURE_TOWER && structure.store[RESOURCE_ENERGY] < structure.store.getCapacity(RESOURCE_ENERGY) * TOWER_FILL_LIMIT
     });
     //there is no tower that needs to be filled
-    if(!towers) {
+    if(towers.length == 0) {
         return null;
     }
 
@@ -141,7 +141,7 @@ function getTowerFeedTarget(creep) {
         }
     }
     //save the chosen tower in the creep's memory for the next ticks
-    creep.memory.sourceId = bestTower.id;
+    creep.memory.towerFeedTargetId = bestTower.id;
     //return the chosen tower
     return bestTower;
 }
@@ -227,12 +227,12 @@ var tasks = {
         //get target to feed
         var target = getTowerFeedTarget(creep);
         //there is no target to feed
-        if(!targetToFeed) {
+        if(!target) {
             return false;
         }
 
         //feed the tower
-        var result = creep.transfer(tower, RESOURCE_ENERGY);
+        var result = creep.transfer(target, RESOURCE_ENERGY);
         if(result == ERR_NOT_IN_RANGE) {
             creep.say('To Tower');
             creep.moveTo(target, {visualizePathStyle: {stroke: '#ffffff'}});

@@ -1,5 +1,5 @@
-# Screeps 2026
-Scripts for the game "screeps".
+# Screeps World 2026
+Scripts for the game "Screeps World".
 
 Info:
 ----
