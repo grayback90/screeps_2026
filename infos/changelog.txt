@@ -1,12 +1,16 @@
 xx.yy.2026
 - 
 
+09.10.2026
+- again tower logic
+- 
+
 08.10.2026
 - tower logic
-- finished great filter "3. Automatic Room Defense"
 
 07.10.2026
 - finished the tasks.js with goals
+- Version 2.0
 - startet with great filter 3 (defence)
     - recognize a threat in my room
 

@@ -17,9 +17,7 @@ var bodyPatterns = {
 //helper function to check if there are tower in the room
 function towersInTheRoom(room) {
     var towers = room.find(FIND_MY_STRUCTURES, {filter: (structure) => structure.structureType == STRUCTURE_TOWER});
-    if(towers.length > 0) {
-        return;
-    }
+    return towers.length > 0;
 }
 
 //spawn queue
@@ -87,7 +85,7 @@ var spawnManager = {
             //check if the spawn condition is meet
             //only for roles that habe spawn condition, if not they will be added if the role is missing
             var condition = creepRoles[role].condition;
-            var conditionMeet = !condition || condition(spawnRoom);
+            var conditionMeet = !condition || condition(spawn.room);
             //if missing and spawn condition is meet, add to queue
             if(conditionMeet && missing > 0) {
                 queue.push({role: role, priority: creepRoles[role].priority});
