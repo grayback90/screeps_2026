@@ -2,7 +2,7 @@
 *
 * file: tasks.js
 * date: 06.10.2026
-* version: 1.1.0
+* version: 1.2.0
 *
 * funtions: define tasks for creeps
 *
@@ -11,6 +11,8 @@
 //constants
 //tower is full if he has more than 90% energy, then he can be fed by a creep
 var TOWER_FILL_LIMIT = 0.9;
+//target hitpoints for walls and ramparts by controller level
+var WALL_HITPOINTS_BY_LEVEL = {1: 0, 2: 10000, 3: 30000, 4: 100000, 5: 300000, 6: 1000000, 7: 3000000, 8: 10000000};
 
 
 //returns the source a creep should harvest from
@@ -144,6 +146,59 @@ function getTowerFeedTarget(creep) {
     creep.memory.towerFeedTargetId = bestTower.id;
     //return the chosen tower
     return bestTower;
+}
+
+//returns the hitpoints for walls and ramparts
+//get the RCL (RoomControllerLevel) and checks the hitpoints of a wall or rampart
+function getWallTarget(room) {
+    var rcl = room.controller.level;
+    return WALL_HITPOINTS_BY_LEVEL(rcl);
+}
+
+//returns the construction site a creep should build
+//reuses the site from the creep's memory, otherwise picks the closest site
+function getRepairTarget(creep) {
+    //get the hitpoints limit of the current room the creep is in
+    var limit = getWallTarget(creep.room);
+    //try to get the target to repair that is saved in the creep's memory
+    var targetToRepair = Game.getObjectById(creep.memory.targetToRepairId);
+    //is there a target in the memory and the hitpoints are lower than the limit, use it
+    if(targetToRepair && targetToRepair.structure.hits < limit) {
+        return targetToRepair;
+    }
+
+    //no target to repair in memory (or the hitpoints are above the limit), find the one with the lowest hitpoints under limit
+    var repairTargets = creep.room.find(FIND_MY_STRUCTURES, {
+      filter: (structure) => {
+            return (structure.structureType == STRUCTURE_WALL ||
+                    structure.structureType == STRUCTURE_RAMPART) &&
+                    structure.hits < limit;
+        }
+    })
+    //there is nothing to repair
+    if(repairTargets.length == 0) {
+        return null;
+    }
+
+    //save the repair target with lowest hitpoints in memory
+    //bestTargetToRepair = repair target with lowest hitpoints so far
+    //bestHitpoints starts very high, so the first repair target with lower hitpoints is always better
+    var bestTargetToRepair = null;
+    var bestHitpoints = Infinity;
+    //check every repair targets in the room
+    for(var i = 0; i < repairTargets.length; i++) {
+        //checks the hitpoints of every repair target in the room
+        var hitpoints = repairTargets[i].hits;
+        //fewer hitpoints than the lowest hitpoints so far -> this is the new bestHitpoints
+        if(hitpoints < bestHitpoints) {
+            bestTargetToRepair = repairTargets[i];
+            bestHitpoints = hitpoints;
+        }
+    }
+    //save the chosen repair target in the creep's memory for the next ticks
+    creep.memory.targetToRepairId = bestTargetToRepair.id;
+    //return the chosen repair target
+    return bestTargetToRepair;
 }
 
 var tasks = {

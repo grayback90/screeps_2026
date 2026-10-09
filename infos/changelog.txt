@@ -3,7 +3,7 @@ xx.yy.2026
 
 09.10.2026
 - again tower logic
-- 
+- repair (without the spam)
 
 08.10.2026
 - tower logic
