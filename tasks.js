@@ -2,7 +2,7 @@
 *
 * file: tasks.js
 * date: 06.10.2026
-* version: 1.2.0
+* version: 1.3.0
 *
 * funtions: define tasks for creeps
 *
@@ -292,6 +292,27 @@ var tasks = {
             creep.moveTo(target, {visualizePathStyle: {stroke: '#ffffff'}});
         } else {
             creep.say('Feeding');
+        }
+        return true;
+    },
+    //repairs the wall or rampart with the lowest hitpoints
+    //function returns false if there is nothing to repair
+    repair: function(creep) {
+        //get target to repair
+        var target = getRepairTarget(creep);
+        //there is no target to repair
+        if(!target){
+            return false;
+        }
+
+        //repair the target
+        var result = creep.repair(target);
+        if(result == ERR_NOT_IN_RANGE) {
+            creep.say('To Wall');
+            //repair range is 3, so this saves movement
+            creep.moveTo(target, {range: 3, visualizePathStyle: {stroke: '#ffffff'}});
+        } else {
+            creep.say('Repairing');
         }
         return true;
     }
