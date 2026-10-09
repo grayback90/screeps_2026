@@ -16,7 +16,7 @@ var roleWallRepairer = {
     /** @param {Creep} creep **/
     run: function(creep) {
  
-        // switch task: empty -> harvest, full -> repair
+        //switch task: empty -> harvest, full -> repair
         tasks.switchTask(creep, 'repair');
  
         if(creep.memory.task == 'repair') {

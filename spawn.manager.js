@@ -1,13 +1,17 @@
 /**********************************************
 *
 * file: spawn.manager.js
-* date: 02.10.2026
-* version: 1.2.0
+* date: 09.10.2026
+* version: 1.4.0
 *
 * funtions: manage the spawning of creeps
 *
 **********************************************/
- 
+
+//constants
+//log interval in ticks
+var LOG_INTERVAL = 20;
+
 //body patterns for creeps (gets repeated as often as energy allows)
 var bodyPatterns = {
     //emergency body pattern (used when energy is low)
@@ -56,9 +60,6 @@ function buildBody(pattern, energy, maxRepeats) {
     return body;
 }
 
-//log interval in ticks
-var LOG_INTERVAL = 20;
-
 //logs a message every LOG_INTERVAL ticks
 function logEvery(message) {
     if(Game.time % LOG_INTERVAL == 0) {
@@ -82,11 +83,11 @@ var spawnManager = {
             return;
         }
  
-        var harvesters = _.filter(Game.creeps, (creep) => creep.memory.role == 'harvester');
-        var towerFeeder = _.filter(Game.creeps, (creep) => creep.memory.role == 'towerFeeder');
-        var wallRepairer = _.filter(Game.creeps, (creep) => creep.memory.role == 'wallRepairer');
-        var upgraders = _.filter(Game.creeps, (creep) => creep.memory.role == 'upgrader');
-        var builders = _.filter(Game.creeps, (creep) => creep.memory.role == 'builder');
+        //count the creeps of every role in creepRoles
+        var counts = {};
+        for(var countRole in creepRoles) {
+            counts[countRole] = _.filter(Game.creeps, (creep) => creep.memory.role == countRole).length;
+        }
     
         //max energy the room can hold (spawn + extensions)
         var energy = spawn.room.energyCapacityAvailable;
@@ -95,7 +96,7 @@ var spawnManager = {
         var queue = [];
         for(var role in creepRoles) {
             //check if the role is missing
-            var missing = creepRoles[role].min - _.filter(Game.creeps, (creep) => creep.memory.role == role).length;
+            var missing = creepRoles[role].min - counts[role];
             //check if the spawn condition is meet
             //only for roles that habe spawn condition, if not they will be added if the role is missing
             var condition = creepRoles[role].condition;
@@ -107,7 +108,7 @@ var spawnManager = {
         }
 
         //emergency spawn: if no harvesters are present, spawn an emergency harvester
-        if(harvesters.length == 0) {
+        if(counts.harvester == 0) {
             queue.push({role: 'harvester', priority: 0, emergency: true});
         }
 
@@ -120,11 +121,17 @@ var spawnManager = {
         //working trough the queue and spawn creeps
         if (queue.length == 0) {
             //nothing to spawn
-            logEvery('Harvesters: ' + harvesters.length + '/' + creepRoles.harvester.min + 
-                    ', TowerFeeder: ' + towerFeeder.length + '/' + creepRoles.towerFeeder.min +
-                    ', WallRepairer: ' + wallRepairer.length + '/' + creepRoles.wallRepairer.min +
-                    ', Upgraders: ' + upgraders.length + '/' + creepRoles.upgrader.min + 
-                    ', Builders: ' + builders.length + '/' + creepRoles.builder.min);
+            //build the status text: one entry per role (current/minimum)
+            var parts = [];
+            for(var statusRole in creepRoles) {
+                //skip roles whose spawn condition is not meet (they are not needed right now)
+                var statusCondition = creepRoles[statusRole].condition;
+                if(statusCondition && !statusCondition(spawn.room)) {
+                    continue;
+                }
+                parts.push(statusRole + ': ' + counts[statusRole] + '/' + creepRoles[statusRole].min);
+            }
+            logEvery('Status: ' + parts.join(', '));
             return;
         } else {
             //get the first item in the queue

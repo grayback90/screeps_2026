@@ -16,7 +16,7 @@ var roleTowerFeeder = {
     /** @param {Creep} creep **/
     run: function(creep) {
  
-        // switch task: empty -> harvest, full -> feedTower
+        //switch task: empty -> harvest, full -> feedTower
         tasks.switchTask(creep, 'feedTower');
  
         if(creep.memory.task == 'feedTower') {

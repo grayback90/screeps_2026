@@ -24,7 +24,7 @@
     a. Tower Defense -> 09.10.2026
     b. Creep Based-Defense
         x. Rampart-Defenders
-        y. Repair spam -> 
+        y. Repair spam -> 09.10.2026
         z. Active-Counter
     c. SafeMode
 
