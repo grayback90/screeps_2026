@@ -18,18 +18,18 @@ var bodyPatterns = {
 function towersInTheRoom(room) {
     var towers = room.find(FIND_MY_STRUCTURES, {filter: (structure) => structure.structureType == STRUCTURE_TOWER});
     if(towers.length > 0) {
-        return true
+        return;
     }
 }
 
 //spawn queue
 //priority of the roles (lower number = higher priority)
 var creepRoles = {
-    harvester: { min: 2, pattern: [WORK, CARRY, MOVE], maxRepeats: 3, priority: 1, condition: true },
+    harvester: { min: 2, pattern: [WORK, CARRY, MOVE], maxRepeats: 3, priority: 1 },
     //condition to spawn towerFeeder: towers in the room > 0
     towerFeeder: { min: 1, pattern: [WORK, CARRY, MOVE], maxRepeats: 3, priority: 2, condition: towersInTheRoom },
-    upgrader: { min: 1, pattern: [WORK, CARRY, MOVE], maxRepeats: 3, priority: 3, condition: true },
-    builder: { min: 1, pattern: [WORK, CARRY, MOVE], maxRepeats: 3, priority: 4, condition: true }
+    upgrader: { min: 1, pattern: [WORK, CARRY, MOVE], maxRepeats: 3, priority: 3 },
+    builder: { min: 1, pattern: [WORK, CARRY, MOVE], maxRepeats: 3, priority: 4 }
 };
 
 //builds a body: repeats the pattern as often as energy and maxRepeats allow
@@ -84,8 +84,12 @@ var spawnManager = {
         for(var role in creepRoles) {
             //check if the role is missing
             var missing = creepRoles[role].min - _.filter(Game.creeps, (creep) => creep.memory.role == role).length;
-            //if missing, add to queue
-            if(missing > 0) {
+            //check if the spawn condition is meet
+            //only for roles that habe spawn condition, if not they will be added if the role is missing
+            var condition = creepRoles[role].condition;
+            var conditionMeet = !condition || condition(spawnRoom);
+            //if missing and spawn condition is meet, add to queue
+            if(conditionMeet && missing > 0) {
                 queue.push({role: role, priority: creepRoles[role].priority});
             }
         }
@@ -104,7 +108,9 @@ var spawnManager = {
         //working trough the queue and spawn creeps
         if (queue.length == 0) {
             //nothing to spawn
-            logEvery('Harvesters: ' + harvesters.length + '/' + creepRoles.harvester.min + ', Upgraders: ' + upgraders.length + '/' + creepRoles.upgrader.min + ', Builders: ' + builders.length + '/' + creepRoles.builder.min);
+            logEvery('Harvesters: ' + harvesters.length + '/' + creepRoles.harvester.min + 
+                    ', Upgraders: ' + upgraders.length + '/' + creepRoles.upgrader.min + 
+                    ', Builders: ' + builders.length + '/' + creepRoles.builder.min);
             return;
         } else {
             //get the first item in the queue
