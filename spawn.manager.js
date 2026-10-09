@@ -2,7 +2,7 @@
 *
 * file: spawn.manager.js
 * date: 02.10.2026
-* version: 1.0.0
+* version: 1.2.0
 *
 * funtions: manage the spawning of creeps
 *
@@ -20,14 +20,26 @@ function towersInTheRoom(room) {
     return towers.length > 0;
 }
 
+//helper funtion to check if there are walls or ramparts in the room
+function wallOrRampartInTheRoom(room) {
+    var wallsRamparts = room.find(FIND_STRUCTURES, {
+        filter: (structure) => {
+            return (structure.structureType == STRUCTURE_WALL ||
+                    structure.structureType == STRUCTURE_RAMPART);
+        }});
+    return wallsRamparts.length > 0;
+}
+
 //spawn queue
 //priority of the roles (lower number = higher priority)
 var creepRoles = {
     harvester: { min: 2, pattern: [WORK, CARRY, MOVE], maxRepeats: 3, priority: 1 },
     //condition to spawn towerFeeder: towers in the room > 0
     towerFeeder: { min: 1, pattern: [WORK, CARRY, MOVE], maxRepeats: 3, priority: 2, condition: towersInTheRoom },
-    upgrader: { min: 1, pattern: [WORK, CARRY, MOVE], maxRepeats: 3, priority: 3 },
-    builder: { min: 1, pattern: [WORK, CARRY, MOVE], maxRepeats: 3, priority: 4 }
+    //condition to spawn wallRepairer: walls or ramparts in the room > 0
+    wallRepairer: { min: 1, pattern: [WORK, CARRY, MOVE], maxRepeats: 3, priority: 3, condition: wallOrRampartInTheRoom },
+    upgrader: { min: 1, pattern: [WORK, CARRY, MOVE], maxRepeats: 3, priority: 4 },
+    builder: { min: 1, pattern: [WORK, CARRY, MOVE], maxRepeats: 3, priority: 5 }
 };
 
 //builds a body: repeats the pattern as often as energy and maxRepeats allow
@@ -71,6 +83,8 @@ var spawnManager = {
         }
  
         var harvesters = _.filter(Game.creeps, (creep) => creep.memory.role == 'harvester');
+        var towerFeeder = _.filter(Game.creeps, (creep) => creep.memory.role == 'towerFeeder');
+        var wallRepairer = _.filter(Game.creeps, (creep) => creep.memory.role == 'wallRepairer');
         var upgraders = _.filter(Game.creeps, (creep) => creep.memory.role == 'upgrader');
         var builders = _.filter(Game.creeps, (creep) => creep.memory.role == 'builder');
     
@@ -107,6 +121,8 @@ var spawnManager = {
         if (queue.length == 0) {
             //nothing to spawn
             logEvery('Harvesters: ' + harvesters.length + '/' + creepRoles.harvester.min + 
+                    ', TowerFeeder: ' + towerFeeder.length + '/' + creepRoles.towerFeeder.min +
+                    ', WallRepairer: ' + wallRepairer.length + '/' + creepRoles.wallRepairer.min +
                     ', Upgraders: ' + upgraders.length + '/' + creepRoles.upgrader.min + 
                     ', Builders: ' + builders.length + '/' + creepRoles.builder.min);
             return;

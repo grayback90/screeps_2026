@@ -2,7 +2,7 @@
 *
 * file: main.js
 * date: 02.10.2026
-* version: 1.2.0
+* version: 1.3.0
 *
 * funtions: main logic
 *
@@ -14,6 +14,7 @@ var roleHarvester = require('role.harvester');
 var roleUpgrader = require('role.upgrader');
 var roleBuilder = require('role.builder');
 var roleTowerFeeder = require('role.towerfeeder');
+var roleWallRepairer = require('role.wallrepairer');
 var defense = require('defense');
 var towerManager = require('tower.manager');
 
@@ -48,6 +49,9 @@ module.exports.loop = function () {
         }
         if(creep.memory.role == 'towerFeeder') {
             roleTowerFeeder.run(creep);
+        }
+        if(creep.memory.role == 'wallRepairer') {
+            roleWallRepairer.run(creep);
         }
     }
 }
