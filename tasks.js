@@ -323,7 +323,7 @@ var tasks = {
         var target = creep.pos.findClosestByRange(FIND_HOSTILE_CREEPS);
         //there is no enemy
         if(!target) {
-            continue;
+            return false;
         }
 
         //if there is at least one enemy -> attack
@@ -332,14 +332,14 @@ var tasks = {
             creep.say('To Enemy');
             creep.moveTo(target);
         } else {
-            creep.say('Attack')
+            creep.say('Attack');
         }
         return true;
     },
     //creep goes to rest if there is no enemy and guards the spawn
     rest: function(creep) {
         //search the next owned spawn
-        var target = creep.pos.findClosestByRange(FIND_MY_SPAWNS);
+        var spawn = creep.pos.findClosestByRange(FIND_MY_SPAWNS);
         //there is no spawn
         if(!target) {
             return;
@@ -349,7 +349,7 @@ var tasks = {
         if(creep.pos.getRangeTo(spawn) > 3) {
             //move to the spawn
             creep.say('To Spawn');
-            creep.moveTo(spawn, {range: 3})
+            creep.moveTo(spawn, {range: 3});
         } else {
             creep.say('Guard');
         }

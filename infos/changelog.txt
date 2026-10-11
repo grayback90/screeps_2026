@@ -1,6 +1,10 @@
 xx.yy.2026
 - 
 
+11.10.2026
+- defend- and rest-tasks
+- 
+
 09.10.2026
 - again tower logic
 - repair (without the spam)
