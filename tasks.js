@@ -2,7 +2,7 @@
 *
 * file: tasks.js
 * date: 06.10.2026
-* version: 1.3.0
+* version: 1.4.0
 *
 * funtions: define tasks for creeps
 *
@@ -315,6 +315,44 @@ var tasks = {
             creep.say('Repairing');
         }
         return true;
+    },
+    //attacks the enemy
+    //function returns false if there is no enemy
+    defend: function(creep) {
+        //search for the next enemy
+        var target = creep.pos.findClosestByRange(FIND_HOSTILE_CREEPS);
+        //there is no enemy
+        if(!target) {
+            continue;
+        }
+
+        //if there is at least one enemy -> attack
+        var result = creep.attack(target);
+        if(result == ERR_NOT_IN_RANGE) {
+            creep.say('To Enemy');
+            creep.moveTo(target);
+        } else {
+            creep.say('Attack')
+        }
+        return true;
+    },
+    //creep goes to rest if there is no enemy and guards the spawn
+    rest: function(creep) {
+        //search the next owned spawn
+        var target = creep.pos.findClosestByRange(FIND_MY_SPAWNS);
+        //there is no spawn
+        if(!target) {
+            return;
+        }
+
+        //is the creep more than 3 spaces away
+        if(creep.pos.getRangeTo(spawn) > 3) {
+            //move to the spawn
+            creep.say('To Spawn');
+            creep.moveTo(spawn, {range: 3})
+        } else {
+            creep.say('Guard');
+        }
     }
 };
 
