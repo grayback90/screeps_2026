@@ -341,7 +341,7 @@ var tasks = {
         //search the next owned spawn
         var spawn = creep.pos.findClosestByRange(FIND_MY_SPAWNS);
         //there is no spawn
-        if(!target) {
+        if(!spawn) {
             return;
         }
 
