@@ -18,6 +18,15 @@ var bodyPatterns = {
     emergencyBody: [WORK, CARRY, MOVE],
 };
 
+//helper function to calculate the minimum number of creeps of a certain role
+function getMin(roleName, room) {
+    var value = creepRoles[roleName].min;
+    if(typeof value == 'function') {
+        return value(room);
+    }
+    return value;
+}
+
 //helper function to check if there are hostile creeps in the room
 function hostilesInTheRoom(room) {
     var hostiles = room.memory.hostileCount;
@@ -106,7 +115,7 @@ var spawnManager = {
         var queue = [];
         for(var role in creepRoles) {
             //check if the role is missing
-            var missing = creepRoles[role].min - counts[role];
+            var missing = getMin(role, spawn.room) - counts[role];
             //check if the spawn condition is meet
             //only for roles that habe spawn condition, if not they will be added if the role is missing
             var condition = creepRoles[role].condition;
@@ -139,7 +148,7 @@ var spawnManager = {
                 if(statusCondition && !statusCondition(spawn.room)) {
                     continue;
                 }
-                parts.push(statusRole + ': ' + counts[statusRole] + '/' + creepRoles[statusRole].min);
+                parts.push(statusRole + ': ' + counts[statusRole] + '/' + getMin(statusRole, spawn.room));
             }
             logEvery('Status: ' + parts.join(', '));
             return;
