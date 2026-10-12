@@ -2,7 +2,7 @@
 *
 * file: defense.js
 * date: 07.10.2026
-* version: 0.1.0
+* version: 0.2.0
 *
 * funtions: detect threats in the rooms
 *           saves the number of hostile creeps in the room memory
@@ -25,6 +25,16 @@ var defense = {
             //find all hostile creeps in the room
             var hostiles = room.find(FIND_HOSTILE_CREEPS);
 
+            //calculate the threat-level of the attack
+            //attack and ranged attack + 1 and heal + 2 
+            var threat = 0;
+            for(var i = 0; i < hostiles.length; i++) {
+                threat = threat + hostiles[i].getActiveBodyparts(ATTACK);
+                threat = threat + hostiles[i].getActiveBodyparts(RANGED_ATTACK);
+                threat = threat + (hostiles[i].getActiveBodyparts(HEAL) * 2);
+            }
+            room.memory.threat = threat;
+
             //read the old count before we overwrite it
             var oldCount = room.memory.hostileCount || 0;
 
@@ -33,7 +43,7 @@ var defense = {
 
             //log only when the situation changes
             if(oldCount == 0 && hostiles.length > 0) {
-                console.log('ALERT: ' + hostiles.length + ' hostile creep(s) in room ' + roomName);
+                console.log('ALERT: ' + hostiles.length + ' hostile creep(s) in room ' + roomName + ' Threat-Level: ' + threat);
             }
             if(oldCount > 0 && hostiles.length == 0) {
                 console.log('All clear: no more hostile creeps in room ' + roomName);
