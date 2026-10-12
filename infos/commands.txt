@@ -9,5 +9,13 @@
 **********************************************/
 
 system.setTickDuration(250) -> 4x faster game
+
 system.resetAllData() -> delete all and start new
-for(var n in Game.creeps) Game.creeps[n].suicide() -> kill all existing creeps
+
+storage.db['rooms.objects'].insert({ room: 'W6N3', x: 1, y: 40, type: 'creep', user: '2', name: 'invader_small_melee', body: [{ type: 'tough', hits: 100 },{ type: 'tough', hits: 100 },{ type: 'move', hits: 100 },{ type: 'move', hits: 100 },{ type: 'move', hits: 100 },{ type: 'move', hits: 100 },{ type: 'attack', hits: 100 },{ type: 'attack', hits: 100 },{ type: 'attack', hits: 100 },{ type: 'move', hits: 100 } ], hits: 1000, hitsMax: 1000, ticksToLive: 1500, fatigue: 0, store: {}, storeCapacity: 0 })
+--> spawns a little attacker in the room on the given coords (set room, x & y)
+
+storage.db['rooms.objects'].update({ type: "spawn" }, { $set: { storeCapacityResource: { energy: 300 } } });
+storage.db['rooms.objects'].update({ type: "extension" }, { $set: { storeCapacityResource: { energy: 50 } } });
+storage.db['rooms.objects'].update({ type: "tower" }, { $set: { storeCapacityResource: { energy: 1000 } } });
+--> fixing the steam localhost bug if the spawn has no energy
