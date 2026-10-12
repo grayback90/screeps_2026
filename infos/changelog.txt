@@ -1,9 +1,12 @@
 xx.yy.2026
 - 
 
+12.10.2026
+- spawn of the defender
+- 
+
 11.10.2026
 - defend- and rest-tasks
-- 
 
 09.10.2026
 - again tower logic

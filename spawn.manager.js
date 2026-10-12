@@ -18,6 +18,14 @@ var bodyPatterns = {
     emergencyBody: [WORK, CARRY, MOVE],
 };
 
+//helper function to check if there are hostile creeps in the room
+function hostilesInTheRoom(room) {
+    var hostiles = room.memory.hostileCount;
+    if(hostiles > 0) {
+        return hostiles;
+    }
+}
+
 //helper function to check if there are tower in the room
 function towersInTheRoom(room) {
     var towers = room.find(FIND_MY_STRUCTURES, {filter: (structure) => structure.structureType == STRUCTURE_TOWER});
@@ -38,12 +46,14 @@ function wallOrRampartInTheRoom(room) {
 //priority of the roles (lower number = higher priority)
 var creepRoles = {
     harvester: { min: 2, pattern: [WORK, CARRY, MOVE], maxRepeats: 3, priority: 1 },
+    //condition to spawn defender: hostiles in the room > 0
+    defender: { min: 1, pattern: [ATTACK, MOVE], maxRepeats: 4, priority: 2, condition: hostilesInTheRoom },
     //condition to spawn towerFeeder: towers in the room > 0
-    towerFeeder: { min: 1, pattern: [WORK, CARRY, MOVE], maxRepeats: 3, priority: 2, condition: towersInTheRoom },
+    towerFeeder: { min: 1, pattern: [WORK, CARRY, MOVE], maxRepeats: 3, priority: 3, condition: towersInTheRoom },
     //condition to spawn wallRepairer: walls or ramparts in the room > 0
-    wallRepairer: { min: 1, pattern: [WORK, CARRY, MOVE], maxRepeats: 3, priority: 3, condition: wallOrRampartInTheRoom },
-    upgrader: { min: 1, pattern: [WORK, CARRY, MOVE], maxRepeats: 3, priority: 4 },
-    builder: { min: 1, pattern: [WORK, CARRY, MOVE], maxRepeats: 3, priority: 5 }
+    wallRepairer: { min: 1, pattern: [WORK, CARRY, MOVE], maxRepeats: 3, priority: 4, condition: wallOrRampartInTheRoom },
+    upgrader: { min: 1, pattern: [WORK, CARRY, MOVE], maxRepeats: 3, priority: 5 },
+    builder: { min: 1, pattern: [WORK, CARRY, MOVE], maxRepeats: 3, priority: 6 }
 };
 
 //builds a body: repeats the pattern as often as energy and maxRepeats allow

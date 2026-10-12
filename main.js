@@ -15,7 +15,7 @@ var roleUpgrader = require('role.upgrader');
 var roleBuilder = require('role.builder');
 var roleTowerFeeder = require('role.towerfeeder');
 var roleWallRepairer = require('role.wallrepairer');
-var roleDefender = require('role.Defender');
+var roleDefender = require('role.defender');
 var defense = require('defense');
 var towerManager = require('tower.manager');
 
