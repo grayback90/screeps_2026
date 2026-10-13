@@ -1,6 +1,9 @@
 xx.yy.2026
 - 
 
+13.10.2026
+- calculate how mandy defenders are needed
+
 12.10.2026
 - spawn of the defender
 - calculate the threat level- 

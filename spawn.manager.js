@@ -11,6 +11,10 @@
 //constants
 //log interval in ticks
 var LOG_INTERVAL = 20;
+//how much stronger than the enemy the creeps will be
+var DEFENDER_MARGIN = 1.5;
+//thats the maximum on defenders to spawn
+var MAX_DEFENDERS = 5;
 
 //body patterns for creeps (gets repeated as often as energy allows)
 var bodyPatterns = {
@@ -25,6 +29,25 @@ function getMin(roleName, room) {
         return value(room);
     }
     return value;
+}
+
+//helper function to decide the minimum on defenders needed
+function defendersNeeded(room) {
+    //defender body the room can pay
+    var defenderBody = buildBody(creepRoles.defender.pattern, room.energyCapacityAvailable, creepRoles.defender.maxRepeats);
+    //count the attack parts
+    var partsPerDefender = _.filter(defenderBody, (part) => part == ATTACK).length;
+
+    //protects that no division by 0 is done
+    if(partsPerDefender == 0) {
+        return 1;
+    }
+
+    //calculate the defenders needed
+    var defendersCount = Math.ceil(room.memory.threat * DEFENDER_MARGIN / partsPerDefender);
+
+    //return the count of defenders
+    return Math.min(Math.max(1, defendersCount), MAX_DEFENDERS);
 }
 
 //helper function to check if there are hostile creeps in the room
@@ -56,7 +79,7 @@ function wallOrRampartInTheRoom(room) {
 var creepRoles = {
     harvester: { min: 2, pattern: [WORK, CARRY, MOVE], maxRepeats: 3, priority: 1 },
     //condition to spawn defender: hostiles in the room > 0
-    defender: { min: 1, pattern: [ATTACK, MOVE], maxRepeats: 4, priority: 2, condition: hostilesInTheRoom },
+    defender: { min: defendersNeeded, pattern: [ATTACK, MOVE], maxRepeats: 4, priority: 2, condition: hostilesInTheRoom },
     //condition to spawn towerFeeder: towers in the room > 0
     towerFeeder: { min: 1, pattern: [WORK, CARRY, MOVE], maxRepeats: 3, priority: 3, condition: towersInTheRoom },
     //condition to spawn wallRepairer: walls or ramparts in the room > 0
