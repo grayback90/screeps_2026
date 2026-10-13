@@ -200,6 +200,11 @@ function getRepairTarget(creep) {
     return bestTargetToRepair;
 }
 
+//
+function getDefensePost(creep, enemy) {
+    
+}
+
 var tasks = {
     //switches between harvest and the work task of a role (empty -> harvest, full -> work)
     switchTask: function(creep, workTask) {

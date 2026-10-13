@@ -25,7 +25,7 @@
     b. Creep Based-Defense
         x. Rampart-Defenders
         y. Repair spam -> 09.10.2026
-        z. Active-Counter
+        z. Active-Counter -> 13.10.2026
     c. SafeMode
 
 4. Effectively Harvesting Energy & Remote Mining
