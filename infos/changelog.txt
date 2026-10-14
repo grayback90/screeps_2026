@@ -1,9 +1,14 @@
 xx.yy.2026
 - 
 
+14.10.2026
+- helper function to find empty ramps
+- expanded the "defend"-task, so that the creeps uses ramps
+- repair spam (if enemys attack, spawn more wallrepairer and repair the attacked ramps)
+- 
+
 13.10.2026
 - calculate how mandy defenders are needed
-- 
 
 12.10.2026
 - spawn of the defender

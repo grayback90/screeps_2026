@@ -2,19 +2,17 @@
 *
 * file: spawn.manager.js
 * date: 09.10.2026
-* version: 1.4.0
+* version: 1.5.0
 *
 * funtions: manage the spawning of creeps
 *
 **********************************************/
 
 //constants
-//log interval in ticks
-var LOG_INTERVAL = 20;
-//how much stronger than the enemy the creeps will be
-var DEFENDER_MARGIN = 1.5;
-//thats the maximum on defenders to spawn
-var MAX_DEFENDERS = 5;
+var LOG_INTERVAL = 20; //log interval in ticks
+var DEFENDER_MARGIN = 1.5; //how much stronger than the enemy the creeps will be
+var MAX_DEFENDERS = 5; //thats the maximum on defenders to spawn
+var REPAIRS_UNDER_ATTACK = 3; //how many wallrepairer in an attack phase
 
 //body patterns for creeps (gets repeated as often as energy allows)
 var bodyPatterns = {
@@ -50,6 +48,16 @@ function defendersNeeded(room) {
     return Math.min(Math.max(1, defendersCount), MAX_DEFENDERS);
 }
 
+//helper function to decide the minimum on wallrepairers needed
+function wallRepairersNeeded(room) {
+    //if there are enemys the min is "REPAIRS_UNDER_ATTACK"
+    if (room.memory.hostileCount > 0) {
+        return REPAIRS_UNDER_ATTACK;
+    } else {
+        return 1;
+    }
+}
+
 //helper function to check if there are hostile creeps in the room
 function hostilesInTheRoom(room) {
     var hostiles = room.memory.hostileCount;
@@ -83,7 +91,7 @@ var creepRoles = {
     //condition to spawn towerFeeder: towers in the room > 0
     towerFeeder: { min: 1, pattern: [WORK, CARRY, MOVE], maxRepeats: 3, priority: 3, condition: towersInTheRoom },
     //condition to spawn wallRepairer: walls or ramparts in the room > 0
-    wallRepairer: { min: 1, pattern: [WORK, CARRY, MOVE], maxRepeats: 3, priority: 4, condition: wallOrRampartInTheRoom },
+    wallRepairer: { min: wallRepairersNeeded, pattern: [WORK, CARRY, MOVE], maxRepeats: 3, priority: 4, condition: wallOrRampartInTheRoom },
     upgrader: { min: 1, pattern: [WORK, CARRY, MOVE], maxRepeats: 3, priority: 5 },
     builder: { min: 1, pattern: [WORK, CARRY, MOVE], maxRepeats: 3, priority: 6 }
 };

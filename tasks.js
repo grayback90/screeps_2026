@@ -2,17 +2,16 @@
 *
 * file: tasks.js
 * date: 06.10.2026
-* version: 1.4.0
+* version: 1.5.0
 *
 * funtions: define tasks for creeps
 *
 **********************************************/
 
 //constants
-//tower is full if he has more than 90% energy, then he can be fed by a creep
-var TOWER_FILL_LIMIT = 0.9;
-//target hitpoints for walls and ramparts by controller level
-var WALL_HITPOINTS_BY_LEVEL = {1: 0, 2: 10000, 3: 30000, 4: 100000, 5: 300000, 6: 1000000, 7: 3000000, 8: 10000000};
+var TOWER_FILL_LIMIT = 0.9; //tower is full if he has more than 90% energy, then he can be fed by a creep
+var WALL_HITPOINTS_BY_LEVEL = {1: 0, 2: 10000, 3: 30000, 4: 100000, 5: 300000, 6: 1000000, 7: 3000000, 8: 10000000}; //target hitpoints for walls and ramparts by controller level
+var ATTACK_ZONE_RANGE = 3; //if a wall is in this range of an hostile creep, it counts as attacked
 
 //returns the source a creep should harvest from
 //reuses the source from the creep's memory, otherwise picks the source with the fewest creeps
@@ -154,21 +153,28 @@ function getWallTarget(room) {
     return WALL_HITPOINTS_BY_LEVEL[rcl] || 0;
 }
 
-//returns the construction site a creep should build
-//reuses the site from the creep's memory, otherwise picks the closest site
+//returns the wall or rampart a creep should repair
+//normal: the one with the lowest hitpoints under the limit (remembered in the creep's memory)
+//under attack: the one with the lowest hitpoints near an enemy (chosen again every tick)
 function getRepairTarget(creep) {
     //get the hitpoints limit of the current room the creep is in
     var limit = getWallTarget(creep.room);
-    //try to get the target to repair that is saved in the creep's memory
-    var targetToRepair = Game.getObjectById(creep.memory.targetToRepairId);
-    //is there a target in the memory and the hitpoints are lower than the limit, use it
-    if(targetToRepair && targetToRepair.hits < limit) {
-        return targetToRepair;
+    //is the room under attack?
+    var underAttack = creep.room.memory.hostileCount > 0;
+ 
+    //not under attack: try to get the target that is saved in the creep's memory
+    //under attack the situation changes every tick, so the creep chooses again
+    if(!underAttack) {
+        var targetToRepair = Game.getObjectById(creep.memory.targetToRepairId);
+        //is there a target in the memory and the hitpoints are lower than the limit, use it
+        if(targetToRepair && targetToRepair.hits < limit) {
+            return targetToRepair;
+        }
     }
-
-    //no target to repair in memory (or the hitpoints are above the limit), find the one with the lowest hitpoints under limit
+ 
+    //find all walls and ramparts with hitpoints under the limit
     var repairTargets = creep.room.find(FIND_STRUCTURES, {
-      filter: (structure) => {
+        filter: (structure) => {
             return (structure.structureType == STRUCTURE_WALL ||
                     structure.structureType == STRUCTURE_RAMPART) &&
                     structure.hits < limit;
@@ -178,17 +184,28 @@ function getRepairTarget(creep) {
     if(repairTargets.length == 0) {
         return null;
     }
-
-    //save the repair target with lowest hitpoints in memory
+ 
+    //under attack: prefer the walls and ramparts that are near an enemy
+    if(underAttack) {
+        var hostiles = creep.room.find(FIND_HOSTILE_CREEPS);
+        //keep only the targets that are within ATTACK_ZONE_RANGE of at least one enemy
+        var threatened = _.filter(repairTargets, (structure) => {
+            return _.some(hostiles, (hostile) => structure.pos.getRangeTo(hostile) <= ATTACK_ZONE_RANGE);
+        });
+        //if there are threatened targets, only look at them, otherwise keep the full list
+        if(threatened.length > 0) {
+            repairTargets = threatened;
+        }
+    }
+ 
     //bestTargetToRepair = repair target with lowest hitpoints so far
-    //bestHitpoints starts very high, so the first repair target with lower hitpoints is always better
+    //bestHitpoints starts very high, so the first repair target is always better
     var bestTargetToRepair = null;
     var bestHitpoints = Infinity;
-    //check every repair targets in the room
+    //check every repair target
     for(var i = 0; i < repairTargets.length; i++) {
-        //checks the hitpoints of every repair target in the room
         var hitpoints = repairTargets[i].hits;
-        //fewer hitpoints than the lowest hitpoints so far -> this is the new bestHitpoints
+        //fewer hitpoints than the lowest so far -> this is the new best
         if(hitpoints < bestHitpoints) {
             bestTargetToRepair = repairTargets[i];
             bestHitpoints = hitpoints;
