@@ -1,6 +1,10 @@
 xx.yy.2026
 - 
 
+15.10.2026
+- tower repairs spawn and extentions
+- start with great filter 17
+
 14.10.2026
 - helper function to find empty ramps
 - expanded the "defend"-task, so that the creeps uses ramps
