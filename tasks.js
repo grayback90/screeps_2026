@@ -200,9 +200,25 @@ function getRepairTarget(creep) {
     return bestTargetToRepair;
 }
 
-//
-function getDefensePost(creep, enemy) {
-    
+// returns the free rampart that is closest to the enemy, or null if there is none
+function getDefensePost(creep, hostile) {
+    // get all ramparts of our room
+    var ramparts = creep.room.find(FIND_MY_STRUCTURES, {
+        filter: (structure) => structure.structureType == STRUCTURE_RAMPART
+    });
+    // keep only ramparts where nobody else stands (the creep itself is fine)
+    var freeRamparts = _.filter(ramparts, (rampart) => {
+        var creepsOnTile = rampart.pos.lookFor(LOOK_CREEPS);
+        return creepsOnTile.length == 0 || creepsOnTile[0].id == creep.id;
+    });
+
+    // there is no free rampart in the room
+    if(freeRamparts.length == 0) {
+        return null;
+    }
+
+    // return the free rampart that is closest to the enemy
+    return hostile.pos.findClosestByRange(freeRamparts);
 }
 
 var tasks = {
@@ -333,11 +349,24 @@ var tasks = {
 
         //if there is at least one enemy -> attack
         var result = creep.attack(target);
-        if(result == ERR_NOT_IN_RANGE) {
-            creep.say('To Enemy');
-            creep.moveTo(target);
+        //get the ramp nearest to the position of the enemy
+        var post = getDefensePost(creep, target);
+        //is there a ramp
+        if(post) {
+            //if the creep doesnt sit on it he moves to it;
+            if(!creep.pos.isEqualTo(post)) {
+                creep.say('To Ramp');
+                creep.moveTo(post);
+            } else {
+                creep.say('Hold Ramp');
+            }
         } else {
-            creep.say('Attack');
+            if(result == ERR_NOT_IN_RANGE) {
+                creep.say('To Enemy');
+                creep.moveTo(target);
+            } else {
+                creep.say('Attack');
+            }
         }
         return true;
     },
