@@ -358,9 +358,12 @@ var tasks = {
                 creep.say('To Ramp');
                 creep.moveTo(post);
             } else {
+                //if he sits on the ramp he hold it against the enemy
                 creep.say('Hold Ramp');
             }
         } else {
+            //if there is no ramp (not build or destroyed)
+            //defender moves to the enemy and attacks directly
             if(result == ERR_NOT_IN_RANGE) {
                 creep.say('To Enemy');
                 creep.moveTo(target);
