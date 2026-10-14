@@ -2,7 +2,7 @@
 *
 * file: role.defender.js
 * date: 11.10.2026
-* version: 0.0.1
+* version: 1.0.0
 *
 * funtions: defends the spawn/room
 *

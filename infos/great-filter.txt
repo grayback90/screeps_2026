@@ -20,13 +20,13 @@
     c. Spawn Queues -> 06.10.2026
     d. Cold-boot -> 05.10.2026
 
-3. Automatic Room Defense -> xx.10.2026
+3. Automatic Room Defense -> 14.10.2026
     a. Tower Defense -> 09.10.2026
     b. Creep Based-Defense -> 14.10.2026
         x. Rampart-Defenders -> 14.10.2026
         y. Repair spam -> 14.10.2026
         z. Active-Counter -> 13.10.2026
-    c. SafeMode -> xx.10.2026
+    c. SafeMode -> 14.10.2026
 
 4. Effectively Harvesting Energy & Remote Mining
     a. Harvesting Types (Kardashev scale)
