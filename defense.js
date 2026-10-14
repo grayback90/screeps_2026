@@ -11,7 +11,7 @@
 
 //constants
 var SAFE_MODE_SPAWN_HITS = 0.6; //under 60% of the spawn hitpoints there is an alarm
-var SAFE_MODE_ENABLED = false; //trigger for testing
+var SAFE_MODE_ENABLED = false; //false = no safe mode, just a log message / true = safe mode will be activated if needed
 
 //helper function that activates the safe mode if a spawn loses hitpoints while enemies are in the room
 function checkSafeMode(room) {
