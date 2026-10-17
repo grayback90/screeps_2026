@@ -55,11 +55,14 @@ var towerManager = {
                     continue;
                 }
 
-                //repair closest structure (road or container) if it is damaged
+                //repair closest structure (road, spawn, extension or container) if it is damaged
                 //only repair if tower has more than 60% energy
                 if(tower.store[RESOURCE_ENERGY] > tower.store.getCapacity(RESOURCE_ENERGY) * REPAIR_RESERVE) {
                     var closestDamagedStructure = tower.pos.findClosestByRange(FIND_STRUCTURES, {
-                        filter: (structure) => structure.hits < structure.hitsMax && (structure.structureType == STRUCTURE_ROAD || structure.structureType == STRUCTURE_CONTAINER)
+                        filter: (structure) => structure.hits < structure.hitsMax && (structure.structureType == STRUCTURE_ROAD 
+                                                                                    || structure.structureType == STRUCTURE_SPAWN
+                                                                                    || structure.structureType == STRUCTURE_EXTENSION
+                                                                                    || structure.structureType == STRUCTURE_CONTAINER)
                     });
                     if(closestDamagedStructure) {
                         tower.repair(closestDamagedStructure);
