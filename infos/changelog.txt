@@ -2,11 +2,11 @@ xx.yy.2026
 - 
 
 xx.10.2026
+- remodel task "harvest" (so that energy from the ground is priority 1 and not the source)
 - start with great filter 17
 
 17.10.2026
 - tower repairs spawn and extentions
-- garbage collector
 
 14.10.2026
 - helper function to find empty ramps
