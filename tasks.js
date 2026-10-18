@@ -2,7 +2,7 @@
 *
 * file: tasks.js
 * date: 06.10.2026
-* version: 2.0.0
+* version: 2.1.0
 *
 * funtions: define tasks for creeps
 *
@@ -12,6 +12,7 @@
 var TOWER_FILL_LIMIT = 0.9; //tower is full if he has more than 90% energy, then he can be fed by a creep
 var WALL_HITPOINTS_BY_LEVEL = {1: 0, 2: 10000, 3: 30000, 4: 100000, 5: 300000, 6: 1000000, 7: 3000000, 8: 10000000}; //target hitpoints for walls and ramparts by controller level
 var ATTACK_ZONE_RANGE = 3; //if a wall is in this range of an hostile creep, it counts as attacked
+var PICKUP_MIN_ENERGY = 50; //energy in the floor below this cap will not be collected
 
 //returns the source a creep should harvest from
 //reuses the source from the creep's memory, otherwise picks the source with the fewest creeps
@@ -217,7 +218,7 @@ function getRepairTarget(creep) {
     return bestTargetToRepair;
 }
 
-// returns the free rampart that is closest to the enemy, or null if there is none
+//returns the free rampart that is closest to the enemy, or null if there is none
 function getDefensePost(creep, hostile) {
     // get all ramparts of our room
     var ramparts = creep.room.find(FIND_MY_STRUCTURES, {
@@ -238,6 +239,43 @@ function getDefensePost(creep, hostile) {
     return hostile.pos.findClosestByRange(freeRamparts);
 }
 
+//returns true if the creep can collect energy of the floor
+//else it returns false
+function collectEnergy(creep) {
+    //search for dropped energy, tombstones and ruins where the energy is like or over the minimum energy that we will pickup
+    var droppedEnergy = creep.room.find(FIND_DROPPED_RESOURCES, {filter: resourceTYPE == RESOURCE_ENERGY && amount >= PICKUP_MIN_ENERGY});
+    var tombstoneEnergy = creep.room.find(FIND_TOMBSTONE, {filter: store[RESOURCE_ENERGY] >= PICKUP_MIN_ENERGY});
+    var ruinsEnergy = creep.room.find(FIND_RUINS, {filter: store[RESOURCE_ENERGY] >= PICKUP_MIN_ENERGY});
+    //combine the three lists
+    var energyOnTheFloor = energyOnTheFloor.concat(droppedEnergy,tombstoneEnergy,ruinsEnergy);
+
+    //no energy to pickup
+    if(!energyOnTheFloor) {
+        return false;
+    }
+
+    //the closest energy on the floor for a creep
+    var closestEnergyOnTheFloor = creep.pos.findClosestByRange(energyOnTheFloor);
+    //check if find resource is on the floor or in a tombstone/ruin
+    if(closestEnergyOnTheFloor.amount !== undefined) {
+        var result = creep.pickup(closestEnergyOnTheFloor);
+    } else {
+        var result = creep.withdraw(closestEnergyOnTheFloor, RESOURCE_ENERGY);
+    }
+
+    //move to the energy pile if not in range
+    if(result == ERR_NOT_IN_RANGE) {
+        creep.moveTo(closestEnergyOnTheFloor, {visualizePathStyle: {stroke: '#ffaa00'}});
+        creep.say('To Pile');
+    } else if (result == OK) {
+        creep.say('Pickup');
+    } else {
+        creep.say('Waiting');
+    }
+
+    return true;
+}
+
 var tasks = {
     //switches between harvest and the work task of a role (empty -> harvest, full -> work)
     switchTask: function(creep, workTask) {
@@ -253,6 +291,12 @@ var tasks = {
     },
     //harvests the source with the fewest creeps harvesting from it
     harvest: function(creep) {
+        //check if there is energy on the ground or in a ruin/tombstone
+        if(collectEnergy(creep)) {
+            return;
+        }
+
+        //else just harvest normal
         var source = getSource(creep);
         if(!source) {
             creep.say('No Source');

@@ -1,7 +1,10 @@
 xx.yy.2026
 - 
 
-xx.10.2026
+19.10.2026
+- 
+
+18.10.2026
 - remodel task "harvest" (so that energy from the ground is priority 1 and not the source)
 - start with great filter 17
 
