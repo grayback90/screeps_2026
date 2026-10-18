@@ -243,14 +243,14 @@ function getDefensePost(creep, hostile) {
 //else it returns false
 function collectEnergy(creep) {
     //search for dropped energy, tombstones and ruins where the energy is like or over the minimum energy that we will pickup
-    var droppedEnergy = creep.room.find(FIND_DROPPED_RESOURCES, {filter: resourceTYPE == RESOURCE_ENERGY && amount >= PICKUP_MIN_ENERGY});
-    var tombstoneEnergy = creep.room.find(FIND_TOMBSTONE, {filter: store[RESOURCE_ENERGY] >= PICKUP_MIN_ENERGY});
-    var ruinsEnergy = creep.room.find(FIND_RUINS, {filter: store[RESOURCE_ENERGY] >= PICKUP_MIN_ENERGY});
+    var droppedEnergy = creep.room.find(FIND_DROPPED_RESOURCES, {filter: (resource) => resource.resourceType == RESOURCE_ENERGY && resource.amount >= PICKUP_MIN_ENERGY});
+    var tombstoneEnergy = creep.room.find(FIND_TOMBSTONES, {filter: (tombstone) => tombstone.store[RESOURCE_ENERGY] >= PICKUP_MIN_ENERGY});
+    var ruinsEnergy = creep.room.find(FIND_RUINS, {filter: (ruin) => ruin.store[RESOURCE_ENERGY] >= PICKUP_MIN_ENERGY});
     //combine the three lists
-    var energyOnTheFloor = energyOnTheFloor.concat(droppedEnergy,tombstoneEnergy,ruinsEnergy);
+    var energyOnTheFloor = droppedEnergy.concat(tombstoneEnergy, ruinsEnergy);
 
     //no energy to pickup
-    if(!energyOnTheFloor) {
+    if(energyOnTheFloor.length == 0) {
         return false;
     }
 
