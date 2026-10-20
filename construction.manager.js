@@ -2,7 +2,7 @@
 *
 * file: construction.manager.js
 * date: 20.10.2026
-* version: 0.1.0
+* version: 0.2.0
 *
 * funtions: places construction sites automatically
 *           extensions: checkerboard pattern around the spawn
@@ -10,13 +10,13 @@
 **********************************************/
 
 //constants
-var EXTENSION_SEARCH_RANGE = 6; //how far from the spawn the extensions are placed (in tiles)
+var EXTENSION_SEARCH_RANGES = [6, 8, 10]; //how far from the spawn the extensions are placed (in tiles), the next range is used if there are not enough free tiles
 var CONSTRUCTION_INTERVAL = 50; //the manager checks every x ticks if something has to be built
 var MAX_CONSTRUCTION_SITES = 5; //max number of construction sites in a room at the same time
 
 //returns the positions for the next extensions (closest to the spawn first)
 //pattern: checkerboard, so the creeps can still walk between the extensions
-function getExtensionPositions(room, count) {
+function getExtensionPositions(room, count, range) {
 
     //we need a spawn as the center of the pattern
     var spawn = room.find(FIND_MY_SPAWNS)[0];
@@ -30,8 +30,8 @@ function getExtensionPositions(room, count) {
     var positions = [];
 
     //check every tile around the spawn
-    for(var dx = -EXTENSION_SEARCH_RANGE; dx <= EXTENSION_SEARCH_RANGE; dx++) {
-        for(var dy = -EXTENSION_SEARCH_RANGE; dy <= EXTENSION_SEARCH_RANGE; dy++) {
+    for(var dx = -range; dx <= range; dx++) {
+        for(var dy = -range; dy <= range; dy++) {
 
             //distance to the spawn, the ring directly around the spawn stays free
             var distance = Math.max(Math.abs(dx), Math.abs(dy));
@@ -121,6 +121,8 @@ var constructionManager = {
             //how many extensions are missing
             var missing = allowed - extensions.length - extensionSites.length;
             if(missing <= 0) {
+                //nothing is missing anymore, the old warning is not needed anymore
+                delete room.memory.constructionWarning;
                 continue;
             }
 
@@ -130,8 +132,33 @@ var constructionManager = {
                 continue;
             }
 
-            //place the missing extensions, but not more than the free slots
-            var positions = getExtensionPositions(room, Math.min(missing, freeSlots));
+            //how many extensions we want to place now: the missing ones, but not more than the free slots
+            var wanted = Math.min(missing, freeSlots);
+
+            //search with a small range first, use a bigger range only if there are not enough free tiles
+            var positions = [];
+            for(var r = 0; r < EXTENSION_SEARCH_RANGES.length; r++) {
+                positions = getExtensionPositions(room, wanted, EXTENSION_SEARCH_RANGES[r]);
+                if(positions.length >= wanted) {
+                    break;
+                }
+            }
+
+            //warn (only when the message changes) if even the biggest range has not enough free tiles
+            var warning = '';
+            if(positions.length < wanted) {
+                warning = 'only ' + positions.length + ' of ' + wanted + ' extension places found, place the rest by hand';
+            }
+            if(warning != (room.memory.constructionWarning || '')) {
+                if(warning) {
+                    console.log('Construction: ' + warning + ' in room ' + roomName);
+                    room.memory.constructionWarning = warning;
+                } else {
+                    delete room.memory.constructionWarning;
+                }
+            }
+
+            //place the found extensions
             for(var i = 0; i < positions.length; i++) {
                 var result = room.createConstructionSite(positions[i].x, positions[i].y, STRUCTURE_EXTENSION);
                 if(result != OK) {
