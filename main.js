@@ -2,7 +2,7 @@
 *
 * file: main.js
 * date: 02.10.2026
-* version: 2.0.0
+* version: 2.1.0
 *
 * funtions: main logic
 *
@@ -18,6 +18,7 @@ var roleWallRepairer = require('role.wallrepairer');
 var roleDefender = require('role.defender');
 var defense = require('defense');
 var towerManager = require('tower.manager');
+var constructionManager = require('construction.manager');
 
 module.exports.loop = function () {
 
@@ -33,6 +34,9 @@ module.exports.loop = function () {
 
     //run tower manager
     towerManager.run();
+
+    //run construction logic
+    constructionManager.run();
 
     //run spawn manager
     spawnManager.run();

@@ -10,8 +10,7 @@
 **********************************************/
 
 //constants
-//the tower will only repair if he has more than 60% energy
-var REPAIR_RESERVE = 0.6;
+var REPAIR_RESERVE = 0.6; //the tower will only repair if he has more than 60% energy
 
 var towerManager = {
 
