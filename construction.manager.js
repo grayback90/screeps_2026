@@ -2,7 +2,7 @@
 *
 * file: construction.manager.js
 * date: 20.10.2026
-* version: 0.2.0
+* version: 0.3.0
 *
 * funtions: places construction sites automatically
 *           extensions: checkerboard pattern around the spawn
@@ -17,7 +17,6 @@ var MAX_CONSTRUCTION_SITES = 5; //max number of construction sites in a room at 
 //returns the positions for the next extensions (closest to the spawn first)
 //pattern: checkerboard, so the creeps can still walk between the extensions
 function getExtensionPositions(room, count, range) {
-
     //we need a spawn as the center of the pattern
     var spawn = room.find(FIND_MY_SPAWNS)[0];
     if(!spawn) {
@@ -88,6 +87,96 @@ function getExtensionPositions(room, count, range) {
     return positions.slice(0, count);
 }
 
+//returns the best free tile next to a source for a container (closest to the spawn), or null if there is none
+function getContainerPosition(room, source) {
+    //we need a spawn to find the shortest way
+    var spawn = room.find(FIND_MY_SPAWNS)[0];
+    if(!spawn) {
+        return null;
+    }
+
+    var terrain = room.getTerrain();
+
+    //best = free tile closest to the spawn so far
+    //bestDistance starts very high, so the first free tile is always better
+    var best = null;
+    var bestDistance = Infinity;
+
+    //check the eight tiles around the source
+    for(var dx = -1; dx <= 1; dx++) {
+        for(var dy = -1; dy <= 1; dy++) {
+
+            //this is the source itself
+            if(dx == 0 && dy == 0) {
+                continue;
+            }
+
+            var x = source.pos.x + dx;
+            var y = source.pos.y + dy;
+
+            //no walls
+            if(terrain.get(x, y) == TERRAIN_MASK_WALL) {
+                continue;
+            }
+
+            //skip tiles where something is already built or planned
+            if(room.lookForAt(LOOK_STRUCTURES, x, y).length > 0 || room.lookForAt(LOOK_CONSTRUCTION_SITES, x, y).length > 0) {
+                continue;
+            }
+
+            //closer to the spawn than the best tile so far -> new best
+            var distance = spawn.pos.getRangeTo(x, y);
+            if(distance < bestDistance) {
+                best = {x: x, y: y};
+                bestDistance = distance;
+            }
+        }
+    }
+
+    return best;
+}
+
+//places a container construction site next to every source that has no container yet
+function placeContainers(room) {
+
+    //count the construction sites, we do not want to place more than MAX_CONSTRUCTION_SITES
+    var siteCount = room.find(FIND_MY_CONSTRUCTION_SITES).length;
+    if(siteCount >= MAX_CONSTRUCTION_SITES) {
+        return;
+    }
+
+    var sources = room.find(FIND_SOURCES);
+    for(var i = 0; i < sources.length; i++) {
+
+        //is there already a container or a container site next to the source?
+        var containers = sources[i].pos.findInRange(FIND_STRUCTURES, 1, {filter: (structure) => structure.structureType == STRUCTURE_CONTAINER});
+        var containerSites = sources[i].pos.findInRange(FIND_CONSTRUCTION_SITES, 1, {filter: (site) => site.structureType == STRUCTURE_CONTAINER});
+        if(containers.length > 0 || containerSites.length > 0) {
+            continue;
+        }
+
+        //find the best tile, skip the source if there is no free tile
+        var pos = getContainerPosition(room, sources[i]);
+        if(!pos) {
+            continue;
+        }
+
+        //place the construction site
+        var result = room.createConstructionSite(pos.x, pos.y, STRUCTURE_CONTAINER);
+        if(result == OK) {
+            console.log('Construction: placed container site at ' + pos.x + '/' + pos.y + ' in room ' + room.name);
+            siteCount++;
+        } else {
+            console.log('Construction: could not place container at ' + pos.x + '/' + pos.y + ': ' + result);
+        }
+
+        //stop if the limit of construction sites is reached
+        if(siteCount >= MAX_CONSTRUCTION_SITES) {
+            return;
+        }
+    }
+}
+
 var constructionManager = {
 
     run: function() {
@@ -109,6 +198,9 @@ var constructionManager = {
             if(room.memory.hostileCount > 0) {
                 continue;
             }
+
+            //place containers next to the sources (before the extensions, because the extension part can end the loop early)
+            placeContainers(room);
 
             //how many extensions are allowed on this controller level
             var allowed = CONTROLLER_STRUCTURES[STRUCTURE_EXTENSION][room.controller.level] || 0;

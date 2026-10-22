@@ -1,6 +1,9 @@
 xx.yy.2026
 - 
 
+22.10.2026
+- automatic container placement
+
 20.10.2026
 - start with great filter 17
 
