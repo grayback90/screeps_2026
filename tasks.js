@@ -2,7 +2,7 @@
 *
 * file: tasks.js
 * date: 06.10.2026
-* version: 2.2.0
+* version: 2.3.0
 *
 * funtions: define tasks for creeps
 *
@@ -13,6 +13,7 @@ var TOWER_FILL_LIMIT = 0.9; //tower is full if he has more than 90% energy, then
 var WALL_HITPOINTS_BY_LEVEL = {1: 0, 2: 10000, 3: 30000, 4: 100000, 5: 300000, 6: 1000000, 7: 3000000, 8: 10000000}; //target hitpoints for walls and ramparts by controller level
 var ATTACK_ZONE_RANGE = 3; //if a wall is in this range of an hostile creep, it counts as attacked
 var PICKUP_MIN_ENERGY = 50; //energy in the floor below this cap will not be collected
+var FETCH_MIN_ENERGY = 50; //a hauler only fetches from containers with at least this much energy
 
 //returns the source a creep should harvest from
 //reuses the source from the creep's memory, otherwise picks the source with the fewest creeps
@@ -311,14 +312,61 @@ function getMinerSource(creep) {
     return null;
 }
 
+//returns the container next to a source that a hauler should fetch energy from
+//reuses the container from the creep's memory, otherwise picks the container with the most energy
+function getFetchTarget(creep) {
+    //try to get the container that is saved in the creep's memory
+    var container = Game.getObjectById(creep.memory.fetchTargetId);
+    //the container still has enough energy, use it
+    if(container && container.store[RESOURCE_ENERGY] >= FETCH_MIN_ENERGY) {
+        return container;
+    }
+ 
+    //find all containers next to a source that have enough energy
+    var containers = creep.room.find(FIND_STRUCTURES, {
+        filter: (structure) => {
+            return structure.structureType == STRUCTURE_CONTAINER &&
+                    structure.store[RESOURCE_ENERGY] >= FETCH_MIN_ENERGY &&
+                    structure.pos.findInRange(FIND_SOURCES, 1).length > 0;
+        }
+    });
+    //there is no container with enough energy
+    if(containers.length == 0) {
+        return null;
+    }
+ 
+    //best = container with the most energy so far
+    var best = null;
+    var bestEnergy = 0;
+    //check every container
+    for(var i = 0; i < containers.length; i++) {
+        var energy = containers[i].store[RESOURCE_ENERGY];
+        //more energy than the best so far -> this is the new best
+        if(energy > bestEnergy) {
+            best = containers[i];
+            bestEnergy = energy;
+        }
+    }
+ 
+    //save the chosen container in the creep's memory for the next ticks
+    creep.memory.fetchTargetId = best.id;
+    //return the chosen container
+    return best;
+}
+
+
 var tasks = {
-    //switches between harvest and the work task of a role (empty -> harvest, full -> work)
-    switchTask: function(creep, workTask) {
+    //switches between the fetch task and the work task of a role (empty -> fetch, full -> work)
+    //fetchTask is optional, the default is harvest
+    switchTask: function(creep, workTask, fetchTask) {
+        //if fetchTask is not set, then it is the 'harvest'-task
+        fetchTask = fetchTask || 'harvest';
+        
         if(!creep.memory.task) {
-            creep.memory.task = 'harvest';
+            creep.memory.task = fetchTask;
         }
         if(creep.memory.task == workTask && creep.store[RESOURCE_ENERGY] == 0) {
-            creep.memory.task = 'harvest';
+            creep.memory.task = fetchTask;
         }
         if(creep.memory.task != workTask && creep.store.getFreeCapacity() == 0) {
             creep.memory.task = workTask;
@@ -521,7 +569,27 @@ var tasks = {
             //for example the source is empty and regenerates
             creep.say('Waiting');
         }
+    },
+    //hauler takes energy out of a container next to a source, returns false if no container has enough energy
+    fetch: function(creep) {
+        //get the container to fetch from
+        var target = getFetchTarget(creep);
+        //there is no container with enough energy
+        if(!target) {
+            return false;
+        }
+ 
+        //take the energy out of the container
+        var result = creep.withdraw(target, RESOURCE_ENERGY);
+        if(result == ERR_NOT_IN_RANGE) {
+            creep.say('To Cont');
+            creep.moveTo(target, {visualizePathStyle: {stroke: '#ffaa00'}});
+        } else {
+            creep.say('Loading');
+        }
+        return true;
     }
+
 };
 
 module.exports = tasks;

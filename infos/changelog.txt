@@ -2,11 +2,12 @@ xx.yy.2026
 - 
 
 24.10.2026
-- task "fetch" and role "hauler"
+- logic when harvester needed and when to switch to miner & hauler
 
 23.10.2026
 - automatic tower placement
 - task "mine" and role "miner"
+- task "fetch" and role "hauler"
 
 22.10.2026
 - automatic container placement
