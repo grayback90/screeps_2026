@@ -36,7 +36,7 @@
         x. Type Three
         y. Type Four?
         z. Type Five!?
-    b. Harvesting Methods
+    b. Harvesting Methods -> In Work
         x. Harvesting
         y. Hauling
         z. Reserving
@@ -106,7 +106,7 @@
 
 17. Automated Room Planning & Building
     a. Locating Potential Rooms
-    b. Building a Plan / Searching for a Location
+    b. Building a Plan / Searching for a Location -> Light Version (Tower, Extension and Container) -> 23.10.2026
         x. Bunker
         y. Stamp/Tile
         z. Dynamic Pattern Generation

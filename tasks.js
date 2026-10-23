@@ -2,7 +2,7 @@
 *
 * file: tasks.js
 * date: 06.10.2026
-* version: 2.1.0
+* version: 2.2.0
 *
 * funtions: define tasks for creeps
 *
@@ -276,6 +276,41 @@ function collectEnergy(creep) {
     return true;
 }
 
+//returns the source a miner works at: a source with a container next to it and no other miner
+//reuses the source from the creep's memory
+function getMinerSource(creep) {
+    //try to get the source that is saved in the creep's memory
+    var source = Game.getObjectById(creep.memory.minerSourceId);
+    //the miner already has a source, use it
+    if(source) {
+        return source;
+    }
+ 
+    //no source in memory yet, check all sources of the room
+    var sources = creep.room.find(FIND_SOURCES);
+    for(var i = 0; i < sources.length; i++) {
+ 
+        //skip sources without a container next to them
+        var containers = sources[i].pos.findInRange(FIND_STRUCTURES, 1, {filter: (structure) => structure.structureType == STRUCTURE_CONTAINER});
+        if(containers.length == 0) {
+            continue;
+        }
+ 
+        //skip sources where another miner already works
+        var miners = _.filter(Game.creeps, (c) => c.memory.role == 'miner' && c.memory.minerSourceId == sources[i].id);
+        if(miners.length > 0) {
+            continue;
+        }
+ 
+        //free source with a container found, save it in the creep's memory for the next ticks
+        creep.memory.minerSourceId = sources[i].id;
+        return sources[i];
+    }
+ 
+    //there is no free source with a container
+    return null;
+}
+
 var tasks = {
     //switches between harvest and the work task of a role (empty -> harvest, full -> work)
     switchTask: function(creep, workTask) {
@@ -450,6 +485,41 @@ var tasks = {
             creep.moveTo(spawn, {range: 3});
         } else {
             creep.say('Guard');
+        }
+    },
+    //miner stands on the container next to its source and harvests (the energy falls into the container)    
+    mine: function(creep) {
+        //get the source of the miner
+        var source = getMinerSource(creep);
+        //there is no free source with a container
+        if(!source) {
+            creep.say('No Post');
+            return;
+        }
+ 
+        //find the container next to the source
+        var containers = source.pos.findInRange(FIND_STRUCTURES, 1, {filter: (structure) => structure.structureType == STRUCTURE_CONTAINER});
+        if(containers.length == 0) {
+            //the container is gone
+            creep.say('No Cont');
+            return;
+        }
+        var container = containers[0];
+ 
+        //the miner has to stand on the container before he harvests, otherwise the energy falls to the ground
+        if(!creep.pos.isEqualTo(container.pos)) {
+            creep.say('To Post');
+            creep.moveTo(container.pos, {visualizePathStyle: {stroke: '#ffaa00'}});
+            return;
+        }
+ 
+        //harvest the source
+        var result = creep.harvest(source);
+        if(result == OK) {
+            creep.say('Mining');
+        } else {
+            //for example the source is empty and regenerates
+            creep.say('Waiting');
         }
     }
 };

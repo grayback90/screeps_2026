@@ -16,6 +16,7 @@ var roleBuilder = require('role.builder');
 var roleTowerFeeder = require('role.towerfeeder');
 var roleWallRepairer = require('role.wallrepairer');
 var roleDefender = require('role.defender');
+var roleMiner = require('role.miner');
 var defense = require('defense');
 var towerManager = require('tower.manager');
 var constructionManager = require('construction.manager');
@@ -60,6 +61,9 @@ module.exports.loop = function () {
         }
         if(creep.memory.role == 'defender') {
             roleDefender.run(creep);
+        }
+        if(creep.memory.role == 'miner') {
+            roleMiner.run(creep);
         }
     }
 }
