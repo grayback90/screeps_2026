@@ -2,7 +2,7 @@
 *
 * file: construction.manager.js
 * date: 20.10.2026
-* version: 0.3.0
+* version: 0.4.0
 *
 * funtions: places construction sites automatically
 *           extensions: checkerboard pattern around the spawn
@@ -177,6 +177,49 @@ function placeContainers(room) {
     }
 }
 
+//places a tower construction site if the controller level allows more towers
+//this ignores MAX_CONSTRUCTION_SITES on purpose, the tower must not wait for the extensions
+function placeTowers(room) {
+    //how many towers are allowed on this controller level
+    var allowed = CONTROLLER_STRUCTURES[STRUCTURE_TOWER][room.controller.level] || 0;
+    if(allowed == 0) {
+        return;
+    }
+
+    //how many towers exist and how many are already planned
+    var towers = room.find(FIND_MY_STRUCTURES, {filter: (structure) => structure.structureType == STRUCTURE_TOWER});
+    var towerSites = room.find(FIND_MY_CONSTRUCTION_SITES, {filter: (site) => site.structureType == STRUCTURE_TOWER});
+
+    //how many towers are missing
+    var missing = allowed - towers.length - towerSites.length;
+    if(missing <= 0) {
+        return;
+    }
+
+    //search for a free place with a small range first, then with a bigger range
+    var positions = [];
+    for(var r = 0; r < EXTENSION_SEARCH_RANGES.length; r++) {
+        positions = getExtensionPositions(room, 1, EXTENSION_SEARCH_RANGES[r]);
+        if(positions.length > 0) {
+            break;
+        }
+    }
+
+    //there is no free place, the tower has to be placed by hand
+    if(positions.length == 0) {
+        console.log('Construction: no free place for the tower in room ' + room.name + ', place it by hand');
+        return;
+    }
+
+    //place the construction site
+    var result = room.createConstructionSite(positions[0].x, positions[0].y, STRUCTURE_TOWER);
+    if(result == OK) {
+        console.log('Construction: placed tower site at ' + positions[0].x + '/' + positions[0].y + ' in room ' + room.name);
+    } else {
+        console.log('Construction: could not place tower at ' + positions[0].x + '/' + positions[0].y + ': ' + result);
+    }
+}
+
 var constructionManager = {
 
     run: function() {
@@ -201,6 +244,9 @@ var constructionManager = {
 
             //place containers next to the sources (before the extensions, because the extension part can end the loop early)
             placeContainers(room);
+
+            //place towers
+            placeTowers(room);
 
             //how many extensions are allowed on this controller level
             var allowed = CONTROLLER_STRUCTURES[STRUCTURE_EXTENSION][room.controller.level] || 0;

@@ -1,6 +1,10 @@
 xx.yy.2026
 - 
 
+23.10.2026
+- automatic tower placement
+- 
+
 22.10.2026
 - automatic container placement
 
