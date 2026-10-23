@@ -19,17 +19,17 @@ var roleHauler = {
 
         if(creep.memory.task == 'fetch') {
             //there is nothing to fetch
-            if(!task.fetch(creep)) {
+            if(!tasks.fetch(creep)) {
                 //has the creep energy in its own storage
                 if(creep.store[RESOURCE_ENERGY] > 0) {
-                    task.deliver(creep);
+                    tasks.deliver(creep);
                 } else {
                     creep.say('Waiting');
                 }
             }
         } else {
             //deliver the energy
-            task.deliver(creep);
+            tasks.deliver(creep);
         }
     }
 };
