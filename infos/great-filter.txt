@@ -35,8 +35,8 @@
         y. Type Four?
         z. Type Five!?
     b. Harvesting Methods -> In Work
-        x. Harvesting
-        y. Hauling
+        x. Harvesting -> 26.10.2026
+        y. Hauling  -> 26.10.2026
         z. Reserving
 
 5. Claiming new rooms

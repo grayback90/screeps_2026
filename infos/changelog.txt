@@ -3,6 +3,7 @@ xx.yy.2026
 
 26.10.2026
 - logic when harvester needed and when to switch to miner & hauler
+- upgrader, builder and repairer take the energy from the container
 - 
 
 23.10.2026

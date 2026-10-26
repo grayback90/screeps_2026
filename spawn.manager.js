@@ -118,8 +118,11 @@ function economyRuns(room) {
 //helper function to check if harvesters are needed
 //returns how many harvesters are needed
 function harvestersNeeded(room) {
-    //checks the economy
-    if(economyRuns(room)) {
+    //if no container build then spawn 2 harvester
+    //if there are container, then its checks the economy
+    if(sourcesWithContainer(room) == 0) {
+        return 2;
+    } else if(economyRuns(room)) {
         return 0;
     } else {
         return 1;
