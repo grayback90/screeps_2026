@@ -1,8 +1,6 @@
 /**********************************************
 *
 * file: role.upgrader.js
-* date: 06.10.2026
-* version: 1.1.0
 *
 * funtions: upgrades the roomcontroller
 *

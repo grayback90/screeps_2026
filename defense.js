@@ -1,8 +1,6 @@
 /**********************************************
 *
 * file: defense.js
-* date: 07.10.2026
-* version: 1.0.0
 *
 * funtions: detect threats and threat-level in the rooms
 *           saves the number of hostile creeps in the room memory

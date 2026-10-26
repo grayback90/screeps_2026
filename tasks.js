@@ -1,8 +1,6 @@
 /**********************************************
 *
 * file: tasks.js
-* date: 06.10.2026
-* version: 2.3.0
 *
 * funtions: define tasks for creeps
 *

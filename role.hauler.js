@@ -1,8 +1,6 @@
 /**********************************************
 *
 * file: role.hauler.js
-* date: 23.10.2026
-* version: 0.0.1
 *
 * funtions: gets the energy from a container to the spawn
 *

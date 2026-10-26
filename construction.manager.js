@@ -1,8 +1,6 @@
 /**********************************************
 *
 * file: construction.manager.js
-* date: 20.10.2026
-* version: 0.4.0
 *
 * funtions: places construction sites automatically
 *           extensions: checkerboard pattern around the spawn

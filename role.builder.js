@@ -1,8 +1,6 @@
 /**********************************************
 *
 * file: role.builder.js
-* date: 05.10.2026
-* version: 1.1.0
 *
 * funtions: builder harvests energy and builds construction sites
 *           upgrades the controller if there is nothing to build

@@ -1,8 +1,9 @@
 xx.yy.2026
 - 
 
-24.10.2026
+26.10.2026
 - logic when harvester needed and when to switch to miner & hauler
+- 
 
 23.10.2026
 - automatic tower placement

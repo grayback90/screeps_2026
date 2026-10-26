@@ -1,8 +1,6 @@
 /**********************************************
 *
 * file: role.towerfeeder.js
-* date: 08.10.2026
-* version: 1.0.0
 *
 * funtions: towerfeeder harvests energy and feeds it to the towers
 *           upgrades the controller if there is nothing to feed

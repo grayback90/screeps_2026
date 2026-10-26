@@ -1,8 +1,6 @@
 /**********************************************
 *
 * file: great-filter.txt
-* date: 01.10.2026
-* version: 0.1
 *
 * Great filter to go after 
 * and to check if overconme (with date)

@@ -1,8 +1,6 @@
 /**********************************************
 *
 * file: role.wallrepairer.js
-* date: 09.10.2026
-* version: 1.0.0
 *
 * funtions: wallrepairer harvests energy and repairs walls and ramparts
 *           upgrades the controller if there is nothing to repair

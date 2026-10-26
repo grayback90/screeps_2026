@@ -1,8 +1,6 @@
 /**********************************************
 *
 * file: commands.txt
-* date: 01.10.2026
-* version: 0.1
 *
 * Commands to test the code
 *
