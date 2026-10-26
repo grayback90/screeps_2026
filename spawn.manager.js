@@ -80,18 +80,66 @@ function wallOrRampartInTheRoom(room) {
     return wallsRamparts.length > 0;
 }
 
+//helper function to count sources with a container in the room
+//returns the count
+function sourcesWithContainer(room) {
+    //get all the sources in the room
+    var sources = room.find(FIND_SOURCES);
+    var sourcesCount = 0;
+    //count the sources with a container
+    for(var i = 0; i < sources.length; i++) {
+        //count sources with a container next to them
+        var containers = sources[i].pos.findInRange(FIND_STRUCTURES, 1, {filter: (structure) => structure.structureType == STRUCTURE_CONTAINER});
+        if(containers.length > 0) {
+            sourcesCount ++;
+        }
+    }
+    return sourcesCount;    
+}
+
+//helper function that counts hauler and miner and checks them with the count of container
+//returns true if everthing is ok else it returns false
+function economyRuns(room) {
+    //checks how many hauler/miner are needed
+    var needed = sourcesWithContainer(room);
+    if(needed == 0) {
+        return false;
+    }
+
+    //count miner and hauler
+    var countMiner = _.filter(Game.creeps, (creep) => creep.memory.role == 'miner').length;
+    var countHauler = _.filter(Game.creeps, (creep) => creep.memory.role == 'hauler').length;
+
+    //checks the count of containers against the count of hauler/miner
+    //if the condition is meet it returns true else it returns false
+    return countMiner >= needed && countHauler >= needed;
+}
+
+//helper function to check if harvesters are needed
+//returns how many harvesters are needed
+function harvestersNeeded(room) {
+    //checks the economy
+    if(economyRuns(room)) {
+        return 0;
+    } else {
+        return 1;
+    }
+}
+
 //spawn queue
 //priority of the roles (lower number = higher priority)
 var creepRoles = {
-    harvester: { min: 2, pattern: [WORK, CARRY, MOVE], maxRepeats: 3, priority: 1 },
+    harvester: { min: harvestersNeeded, pattern: [WORK, CARRY, MOVE], maxRepeats: 3, priority: 1 },
     //condition to spawn defender: hostiles in the room > 0
     defender: { min: defendersNeeded, pattern: [ATTACK, MOVE], maxRepeats: 4, priority: 2, condition: hostilesInTheRoom },
+    miner: { min: sourcesWithContainer, pattern: [WORK, WORK, MOVE], maxRepeats: 2, priority: 3 },
+    hauler: { min: sourcesWithContainer, pattern: [CARRY, MOVE], maxRepeats: 6, priority: 4 },
     //condition to spawn towerFeeder: towers in the room > 0
-    towerFeeder: { min: 1, pattern: [WORK, CARRY, MOVE], maxRepeats: 3, priority: 3, condition: towersInTheRoom },
+    towerFeeder: { min: 1, pattern: [WORK, CARRY, MOVE], maxRepeats: 3, priority: 5, condition: towersInTheRoom },
     //condition to spawn wallRepairer: walls or ramparts in the room > 0
-    wallRepairer: { min: wallRepairersNeeded, pattern: [WORK, CARRY, MOVE], maxRepeats: 3, priority: 4, condition: wallOrRampartInTheRoom },
-    upgrader: { min: 1, pattern: [WORK, CARRY, MOVE], maxRepeats: 3, priority: 5 },
-    builder: { min: 1, pattern: [WORK, CARRY, MOVE], maxRepeats: 3, priority: 6 }
+    wallRepairer: { min: wallRepairersNeeded, pattern: [WORK, CARRY, MOVE], maxRepeats: 3, priority: 6, condition: wallOrRampartInTheRoom },
+    upgrader: { min: 1, pattern: [WORK, CARRY, MOVE], maxRepeats: 3, priority: 7 },
+    builder: { min: 1, pattern: [WORK, CARRY, MOVE], maxRepeats: 3, priority: 8 }
 };
 
 //builds a body: repeats the pattern as often as energy and maxRepeats allow
@@ -155,8 +203,10 @@ var spawnManager = {
             }
         }
 
-        //emergency spawn: if no harvesters are present, spawn an emergency harvester
-        if(counts.harvester == 0) {
+        //check if there are harvester, hauler or miner present
+        var energySupplyAlive = counts.harvester > 0 || (counts.miner > 0 && counts.hauler > 0);
+        //emergency spawn: if no harvesters or no hauler/miner are present, spawn an emergency harvester
+        if(!energySupplyAlive) {
             queue.push({role: 'harvester', priority: 0, emergency: true});
         }
 
