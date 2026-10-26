@@ -14,8 +14,8 @@ var roleBuilder = {
     /** @param {Creep} creep **/
     run: function(creep) {
  
-        //switch task: empty -> harvest, full -> build
-        tasks.switchTask(creep, 'build');
+        //switch task: empty -> gather, full -> build
+        tasks.switchTask(creep, 'build', 'gather');
  
         if(creep.memory.task == 'build') {
             //build, if there is nothing to build: upgrade the controller instead

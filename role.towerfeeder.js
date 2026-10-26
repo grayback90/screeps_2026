@@ -14,8 +14,8 @@ var roleTowerFeeder = {
     /** @param {Creep} creep **/
     run: function(creep) {
  
-        //switch task: empty -> harvest, full -> feedTower
-        tasks.switchTask(creep, 'feedTower');
+        //switch task: empty -> gather, full -> feedTower
+        tasks.switchTask(creep, 'feedTower', 'gather');
  
         if(creep.memory.task == 'feedTower') {
             //feed tower, if there is no tower to feed: upgrade the controller instead

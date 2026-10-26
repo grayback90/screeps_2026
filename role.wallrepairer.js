@@ -14,8 +14,8 @@ var roleWallRepairer = {
     /** @param {Creep} creep **/
     run: function(creep) {
  
-        //switch task: empty -> harvest, full -> repair
-        tasks.switchTask(creep, 'repair');
+        //switch task: empty -> gather, full -> repair
+        tasks.switchTask(creep, 'repair', 'gather');
  
         if(creep.memory.task == 'repair') {
             //repair, if there is nothing to repair: upgrade the controller instead

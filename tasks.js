@@ -12,6 +12,7 @@ var WALL_HITPOINTS_BY_LEVEL = {1: 0, 2: 10000, 3: 30000, 4: 100000, 5: 300000, 6
 var ATTACK_ZONE_RANGE = 3; //if a wall is in this range of an hostile creep, it counts as attacked
 var PICKUP_MIN_ENERGY = 50; //energy in the floor below this cap will not be collected
 var FETCH_MIN_ENERGY = 50; //a hauler only fetches from containers with at least this much energy
+var CONTAINER_SURPLUS = 500; //if a container has more than this threshold it counts as overflowing
 
 //returns the source a creep should harvest from
 //reuses the source from the creep's memory, otherwise picks the source with the fewest creeps
@@ -352,6 +353,36 @@ function getFetchTarget(creep) {
     return best;
 }
 
+//return the container that is overflowing and nearest to the creep
+function getSupplyTarget(creep) {
+    //get the container from memory
+    var container = Game.getObjectById(creep.memory.gatherTargetId);
+    //if there is no container in memory
+    if(container && container.store[RESOURCE_ENERGY] >= FETCH_MIN_ENERGY) {
+        return container;
+    }
+
+    //find all containers that overflow with energy
+    var containers = creep.room.find(FIND_STRUCTURES, {
+        filter: (structure) => {
+            return structure.structureType == STRUCTURE_CONTAINER &&
+                    structure.store[RESOURCE_ENERGY] >= CONTAINER_SURPLUS;
+        }
+    });
+
+    //there is no container or not overflowing
+    if(containers.length == 0) {
+        return null;
+    }
+
+    //choose the closest that match the condition
+    var closestContainer = creep.pos.findClosestByRange(containers);
+    //save it to the memory
+    creep.memory.gatherTargetId = closestContainer;
+
+    return closestContainer;
+
+}
 
 var tasks = {
     //switches between the fetch task and the work task of a role (empty -> fetch, full -> work)
@@ -586,8 +617,32 @@ var tasks = {
             creep.say('Loading');
         }
         return true;
-    }
+    },
+    //gather energy from the ground -> container -> harvest yourself from the source
+    gather: function(creep) {
+        //checks if there is energy on the floor
+        if(collectEnergy(creep)) {
+            return;
+        }
+        //get the target to gather from
+        var target = getSupplyTarget(creep);
+        //if there is no target then go and harvest yourself (fallback)
+        if(!target) {
+            tasks.harvest(creep);
+            return;
+        }
 
+        //withdraw energy from the container
+        var result = creep.withdraw(target, RESOURCE_ENERGY);
+
+        if(result == ERR_NOT_IN_RANGE) {
+            creep.say('To Cont');
+            creep.moveTo(target, {visualizePathStyle: {stroke: '#ffaa00'}});
+        } else {
+            creep.say('Taking');
+        }
+        return;
+    }
 };
 
 module.exports = tasks;
