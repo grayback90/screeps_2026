@@ -2,7 +2,7 @@
 *
 * file: role.towerfeeder.js
 *
-* funtions: towerfeeder harvests energy and feeds it to the towers
+* funtions: towerfeeder gathers energy and feeds it to the towers
 *           upgrades the controller if there is nothing to feed
 *
 **********************************************/
@@ -23,8 +23,8 @@ var roleTowerFeeder = {
                 tasks.upgrade(creep);
             }
         } else {
-            //harvest energy
-            tasks.harvest(creep);
+            //gather energy
+            tasks.gather(creep);
         }
     }
 };

@@ -378,7 +378,7 @@ function getSupplyTarget(creep) {
     //choose the closest that match the condition
     var closestContainer = creep.pos.findClosestByRange(containers);
     //save it to the memory
-    creep.memory.gatherTargetId = closestContainer;
+    creep.memory.gatherTargetId = closestContainer.id;
 
     return closestContainer;
 

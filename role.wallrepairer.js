@@ -2,7 +2,7 @@
 *
 * file: role.wallrepairer.js
 *
-* funtions: wallrepairer harvests energy and repairs walls and ramparts
+* funtions: wallrepairer gathers energy and repairs walls and ramparts
 *           upgrades the controller if there is nothing to repair
 *
 **********************************************/
@@ -23,8 +23,8 @@ var roleWallRepairer = {
                 tasks.upgrade(creep);
             }
         } else {
-            //harvest energy
-            tasks.harvest(creep);
+            //gather energy
+            tasks.gather(creep);
         }
     }
 };

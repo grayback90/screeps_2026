@@ -2,7 +2,7 @@
 *
 * file: role.builder.js
 *
-* funtions: builder harvests energy and builds construction sites
+* funtions: builder gathers energy and builds construction sites
 *           upgrades the controller if there is nothing to build
 *
 **********************************************/
@@ -23,8 +23,8 @@ var roleBuilder = {
                 tasks.upgrade(creep);
             }
         } else {
-            //harvest energy
-            tasks.harvest(creep);
+            //gather energy
+            tasks.gather(creep);
         }
     }
 };
