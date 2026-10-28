@@ -34,7 +34,7 @@
         x. Type Three
         y. Type Four?
         z. Type Five!?
-    b. Harvesting Methods -> In Work
+    b. Harvesting Methods -> for now on hold
         x. Harvesting -> 26.10.2026
         y. Hauling  -> 26.10.2026
         z. Reserving
@@ -50,7 +50,7 @@
     c. More automatic attacks
 
 7. Scouting & Storing information
-    a. Screep Scouting
+    a. Screep Scouting -> 28.10.2026
     b. Observation Scouting
     c. Storing information
 
@@ -94,7 +94,7 @@
     b. Attacking
 
 16. Better Pathing & Caching Paths
-    a. Optimizing MoveTo
+    a. Optimizing MoveTo -> xx.yy.2026
         x. reusePath
         y. ignoreCreeps
         z. range

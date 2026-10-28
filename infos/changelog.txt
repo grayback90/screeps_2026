@@ -1,8 +1,11 @@
 xx.yy.2026
 - 
 
+28.10.2026
+- great filter 7a (creep scouting)
+
 27.10.2026
-- 
+- bugfix 
 
 26.10.2026
 - logic when harvester needed and when to switch to miner & hauler
