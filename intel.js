@@ -6,6 +6,11 @@
 *
 **********************************************/
 
+//constants
+var MAX_SCOUT_RANGE = 2; //the range of rooms the scout can visit around the home room
+var SCOUT_STALE = 10000; //outdated room data after this tick count
+
+
 var intel = {
 
     recordRoom: function(room) {
