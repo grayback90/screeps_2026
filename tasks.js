@@ -6,6 +6,9 @@
 *
 **********************************************/
 
+//imports
+var intel = require('intel');
+
 //constants
 var TOWER_FILL_LIMIT = 0.9; //tower is full if he has more than 90% energy, then he can be fed by a creep
 var WALL_HITPOINTS_BY_LEVEL = {1: 0, 2: 10000, 3: 30000, 4: 100000, 5: 300000, 6: 1000000, 7: 3000000, 8: 10000000}; //target hitpoints for walls and ramparts by controller level
@@ -640,6 +643,36 @@ var tasks = {
             creep.moveTo(target, {visualizePathStyle: {stroke: '#ffaa00'}});
         } else {
             creep.say('Taking');
+        }
+        return;
+    },
+    scout: function(creep) {
+        //remember home
+        var creepHome = creep.memory.home;
+        if(!creepHome) {
+            creepHome = creep.room.name;
+        }
+
+        //data of the current room
+        var data = creep.room.memory.scout;
+        //if there is no data or data is older than 100 ticks
+        if(!data || (Game.time - data.time > 100)) {
+            intel.recordRoom(creep.room);
+        }
+
+        //check the target (if there is no target or the scout stands in the target room)
+        var scoutTarget = creep.memory.scoutTarget;
+        if(!scoutTarget || creep.room.name == scoutTarget) {
+            scoutTarget = intel.getScoutTarget(creep);
+        }
+
+        //is the target 'null' then go home else go scouting
+        if(scoutTarget == null) {
+            creep.say('Done');
+            creep.moveTo(newRoomPosition(25, 25, creep.memory.home), {range: 20});
+        } else {
+            creep.moveTo(new RoomPosition(25, 25, creep.memory.scoutTarget), {range: 20, visualizePathStyle: {stroke: '#00ffff'}});
+            creep.say('Scouting');
         }
         return;
     }
