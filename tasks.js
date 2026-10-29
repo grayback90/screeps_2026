@@ -648,9 +648,8 @@ var tasks = {
     },
     scout: function(creep) {
         //remember home
-        var creepHome = creep.memory.home;
-        if(!creepHome) {
-            creepHome = creep.room.name;
+        if(!creep.memory.home) {
+            creep.memory.home = creep.room.name;
         }
 
         //data of the current room
@@ -664,14 +663,15 @@ var tasks = {
         var scoutTarget = creep.memory.scoutTarget;
         if(!scoutTarget || creep.room.name == scoutTarget) {
             scoutTarget = intel.getScoutTarget(creep);
+            creep.memory.scoutTarget = scoutTarget;
         }
 
         //is the target 'null' then go home else go scouting
         if(scoutTarget == null) {
             creep.say('Done');
-            creep.moveTo(newRoomPosition(25, 25, creep.memory.home), {range: 20});
+            creep.moveTo(new RoomPosition(25, 25, creep.memory.home), {range: 20});
         } else {
-            creep.moveTo(new RoomPosition(25, 25, creep.memory.scoutTarget), {range: 20, visualizePathStyle: {stroke: '#00ffff'}});
+            creep.moveTo(new RoomPosition(25, 25, scoutTarget), {range: 20, visualizePathStyle: {stroke: '#00ffff'}});
             creep.say('Scouting');
         }
         return;
