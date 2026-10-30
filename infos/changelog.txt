@@ -3,6 +3,7 @@ xx.yy.2026
 
 30.10.2026
 - scout spawning
+- optimize "moveTo"
 
 29.10.2026
 - scout task

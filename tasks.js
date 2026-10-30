@@ -16,6 +16,8 @@ var ATTACK_ZONE_RANGE = 3; //if a wall is in this range of an hostile creep, it 
 var PICKUP_MIN_ENERGY = 50; //energy in the floor below this cap will not be collected
 var FETCH_MIN_ENERGY = 50; //a hauler only fetches from containers with at least this much energy
 var CONTAINER_SURPLUS = 500; //if a container has more than this threshold it counts as overflowing
+var REUSE_PATH = 20; //creep calculates new path in this amount of ticks (standard is 5)
+var DEBUG_PATHS = false; //disable/enable the visualisation of the path (false uses less CPU)
 
 //returns the source a creep should harvest from
 //reuses the source from the creep's memory, otherwise picks the source with the fewest creeps
@@ -268,7 +270,7 @@ function collectEnergy(creep) {
 
     //move to the energy pile if not in range
     if(result == ERR_NOT_IN_RANGE) {
-        creep.moveTo(closestEnergyOnTheFloor, {visualizePathStyle: {stroke: '#ffaa00'}});
+        moveToTarget(creep, closestEnergyOnTheFloor, {visualizePathStyle: {stroke: '#ffaa00'}});
         creep.say('To Pile');
     } else if (result == OK) {
         creep.say('Pickup');
@@ -387,6 +389,26 @@ function getSupplyTarget(creep) {
 
 }
 
+//returns the moveTo function with special options
+function moveToTarget(creep, target, options) {
+    //if options are not set, get a empty object
+    options = options || {};
+    //set the standard values if they are not set
+    if(options.reusePath === undefined) {
+        options.reusePath = REUSE_PATH;
+    }
+    //draw the path only in debug mode (needs more CPU)
+    if(DEBUG_PATHS) {
+        //check if format is set, if not set it to standard
+        if(!options.visualizePathStyle) {
+            options.visualizePathStyle = {stroke: '#ffffff'}; 
+        }
+    } else {
+        delete options.visualizePathStyle;
+    }
+    return creep.moveTo(target, options);
+}
+
 var tasks = {
     //switches between the fetch task and the work task of a role (empty -> fetch, full -> work)
     //fetchTask is optional, the default is harvest
@@ -419,7 +441,7 @@ var tasks = {
         }
         var result = creep.harvest(source);
         if(result == ERR_NOT_IN_RANGE) {
-            creep.moveTo(source, {visualizePathStyle: {stroke: '#ffaa00'}});
+            moveToTarget(creep, source, {visualizePathStyle: {stroke: '#ffaa00'}});
             creep.say('To Source');
         } else if (result == OK) {
             creep.say('Harvesting');
@@ -431,7 +453,7 @@ var tasks = {
     upgrade: function(creep) {
         var result = creep.upgradeController(creep.room.controller);
         if(result == ERR_NOT_IN_RANGE) {
-            creep.moveTo(creep.room.controller, {visualizePathStyle: {stroke: '#ffffff'}});
+            moveToTarget(creep, creep.room.controller, {visualizePathStyle: {stroke: '#ffffff'}});
             creep.say('To Ctrl');
         } else if(result == OK) {
             creep.say('Upgrading');
@@ -447,7 +469,7 @@ var tasks = {
         }
         var result = creep.build(site);
         if(result == ERR_NOT_IN_RANGE) {
-            creep.moveTo(site, {visualizePathStyle: {stroke: '#ffffff'}});
+            moveToTarget(creep, site, {visualizePathStyle: {stroke: '#ffffff'}});
             creep.say('To Site');
         } else if(result == OK) {
             creep.say('Building');
@@ -466,7 +488,7 @@ var tasks = {
         var result = creep.transfer(target, RESOURCE_ENERGY);
         if(result == ERR_NOT_IN_RANGE) {
             creep.say('To Spawn');
-            creep.moveTo(target, {visualizePathStyle: {stroke: '#ffffff'}});
+            moveToTarget(creep, target, {visualizePathStyle: {stroke: '#ffffff'}});
         } else {
             creep.say('Transfer');
         }
@@ -486,7 +508,7 @@ var tasks = {
         var result = creep.transfer(target, RESOURCE_ENERGY);
         if(result == ERR_NOT_IN_RANGE) {
             creep.say('To Tower');
-            creep.moveTo(target, {visualizePathStyle: {stroke: '#ffffff'}});
+            moveToTarget(creep, target, {visualizePathStyle: {stroke: '#ffffff'}});
         } else {
             creep.say('Feeding');
         }
@@ -507,7 +529,7 @@ var tasks = {
         if(result == ERR_NOT_IN_RANGE) {
             creep.say('To Wall');
             //repair range is 3, so this saves movement
-            creep.moveTo(target, {range: 3, visualizePathStyle: {stroke: '#ffffff'}});
+            moveToTarget(creep, target, {range: 3, visualizePathStyle: {stroke: '#ffffff'}});
         } else {
             creep.say('Repairing');
         }
@@ -532,7 +554,7 @@ var tasks = {
             //if the creep doesnt sit on it he moves to it;
             if(!creep.pos.isEqualTo(post)) {
                 creep.say('To Ramp');
-                creep.moveTo(post);
+                moveToTarget(creep, post);
             } else {
                 //if he sits on the ramp he hold it against the enemy
                 creep.say('Hold Ramp');
@@ -542,7 +564,7 @@ var tasks = {
             //defender moves to the enemy and attacks directly
             if(result == ERR_NOT_IN_RANGE) {
                 creep.say('To Enemy');
-                creep.moveTo(target);
+                moveToTarget(creep, target);
             } else {
                 creep.say('Attack');
             }
@@ -562,7 +584,7 @@ var tasks = {
         if(creep.pos.getRangeTo(spawn) > 3) {
             //move to the spawn
             creep.say('To Spawn');
-            creep.moveTo(spawn, {range: 3});
+            moveToTarget(creep, spawn, {range: 3});
         } else {
             creep.say('Guard');
         }
@@ -589,7 +611,7 @@ var tasks = {
         //the miner has to stand on the container before he harvests, otherwise the energy falls to the ground
         if(!creep.pos.isEqualTo(container.pos)) {
             creep.say('To Post');
-            creep.moveTo(container.pos, {visualizePathStyle: {stroke: '#ffaa00'}});
+            moveToTarget(creep, container.pos, {visualizePathStyle: {stroke: '#ffaa00'}});
             return;
         }
  
@@ -615,7 +637,7 @@ var tasks = {
         var result = creep.withdraw(target, RESOURCE_ENERGY);
         if(result == ERR_NOT_IN_RANGE) {
             creep.say('To Cont');
-            creep.moveTo(target, {visualizePathStyle: {stroke: '#ffaa00'}});
+            moveToTarget(creep, target, {visualizePathStyle: {stroke: '#ffaa00'}});
         } else {
             creep.say('Loading');
         }
@@ -640,7 +662,7 @@ var tasks = {
 
         if(result == ERR_NOT_IN_RANGE) {
             creep.say('To Cont');
-            creep.moveTo(target, {visualizePathStyle: {stroke: '#ffaa00'}});
+            moveToTarget(creep, target, {visualizePathStyle: {stroke: '#ffaa00'}});
         } else {
             creep.say('Taking');
         }
@@ -669,9 +691,9 @@ var tasks = {
         //is the target 'null' then go home else go scouting
         if(scoutTarget == null) {
             creep.say('Done');
-            creep.moveTo(new RoomPosition(25, 25, creep.memory.home), {range: 20});
+            moveToTarget(creep, new RoomPosition(25, 25, creep.memory.home), {range: 20});
         } else {
-            creep.moveTo(new RoomPosition(25, 25, scoutTarget), {range: 20, visualizePathStyle: {stroke: '#00ffff'}});
+            moveToTarget(creep, new RoomPosition(25, 25, scoutTarget), {range: 20, visualizePathStyle: {stroke: '#00ffff'}});
             creep.say('Scouting');
         }
         return;
