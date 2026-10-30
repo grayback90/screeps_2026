@@ -6,11 +6,14 @@
 *
 **********************************************/
 
+var intel = require('intel');
+
 //constants
 var LOG_INTERVAL = 20; //log interval in ticks
 var DEFENDER_MARGIN = 1.5; //how much stronger than the enemy the creeps will be
 var MAX_DEFENDERS = 5; //thats the maximum on defenders to spawn
 var REPAIRS_UNDER_ATTACK = 3; //how many wallrepairer in an attack phase
+var TICKRATE_SCOUTCHECK = 50; //the count in which a new calculation is done
 
 //body patterns for creeps (gets repeated as often as energy allows)
 var bodyPatterns = {
@@ -129,10 +132,25 @@ function harvestersNeeded(room) {
     }
 }
 
+//helper function to check if a scout is needed
+//returns how many scouts are needed
+function scoutsNeeded(romm) {
+    //check only all if the ticks=TICKRATE_SCOUTCHECK
+    if(!room.memory.scoutCheck || (Game.time - room.memory.scoutCheck >= TICKRATE_SCOUTCHECK)) {
+        //simple test-object
+        var target = intel.getScoutTarget({memory: {home: room.name}, room: room});
+        room.memory.scoutsNeeded = target ? 1 : 0;
+        room.memory.scoutCheck = Game.time;
+    }
+    //returns always 0 or a higher number if a scout is needed
+    return room.memory.scoutsNeeded || 0;
+}
+
 //spawn queue
 //priority of the roles (lower number = higher priority)
 var creepRoles = {
     harvester: { min: harvestersNeeded, pattern: [WORK, CARRY, MOVE], maxRepeats: 3, priority: 1 },
+    scout: { min: scoutsNeeded, pattern: [MOVE], maxRepeats: 1, priority: 1.5 },
     //condition to spawn defender: hostiles in the room > 0
     defender: { min: defendersNeeded, pattern: [ATTACK, MOVE], maxRepeats: 4, priority: 2, condition: hostilesInTheRoom },
     miner: { min: sourcesWithContainer, pattern: [WORK, WORK, MOVE], maxRepeats: 2, priority: 3 },
