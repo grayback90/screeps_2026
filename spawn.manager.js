@@ -134,7 +134,7 @@ function harvestersNeeded(room) {
 
 //helper function to check if a scout is needed
 //returns how many scouts are needed
-function scoutsNeeded(romm) {
+function scoutsNeeded(room) {
     //check only all if the ticks=TICKRATE_SCOUTCHECK
     if(!room.memory.scoutCheck || (Game.time - room.memory.scoutCheck >= TICKRATE_SCOUTCHECK)) {
         //simple test-object
