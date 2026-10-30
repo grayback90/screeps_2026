@@ -9,14 +9,21 @@ Ideas:
 Roles that need to be implemented (priority is the order):
 ----
 - "claimer" -> claims a new room
-- "lorry" -> transport energy from the source-tank to the room-controller
 - "remoteHarvester": -> harvest sources in remote rooms
-- "guard": goes to "Protect Flag" and guards this area
 - "demolischer": -> spawned if "Demolisher Flag" is set and dismantles construction site
 
 Army roles that need to be implemented:
 ----
-- "scout": -> runs to other rooms and tells if he is attack or if he find hostile/other creeps
 - "tank" -> high life, meele attacker
 - "ranger" -> ranged attacker, tries to stay behind tank or out of meele range
 - "healer" -> helas the other army-member
+
+Next Steps:
+----
+1. optimize moveTo (filter 16)
+2. streets on solid ground, then on the most used path (filter 17)
+3. skaling upgrader count with energy overflow
+4. update scout information for remote rooms
+5. remoteHarvester (filter 4)
+6. defenseSquad for remote rooms
+7. claimer and reserving
