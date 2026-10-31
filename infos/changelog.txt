@@ -1,6 +1,9 @@
 xx.yy.2026
 - 
 
+31.10.2026
+- build streets (simple spawn -> container and spawn -> controller)
+
 30.10.2026
 - scout spawning
 - optimize "moveTo"

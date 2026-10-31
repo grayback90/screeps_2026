@@ -554,7 +554,7 @@ var tasks = {
             //if the creep doesnt sit on it he moves to it;
             if(!creep.pos.isEqualTo(post)) {
                 creep.say('To Ramp');
-                moveToTarget(creep, post);
+                moveToTarget(creep, post, {reusePath: 2});
             } else {
                 //if he sits on the ramp he hold it against the enemy
                 creep.say('Hold Ramp');

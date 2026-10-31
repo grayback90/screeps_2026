@@ -4,6 +4,7 @@
 *
 * funtions: places construction sites automatically
 *           extensions: checkerboard pattern around the spawn
+*           roads: on the fixed ways spawn -> source containers and spawn -> controller
 *
 **********************************************/
 
@@ -218,6 +219,100 @@ function placeTowers(room) {
     }
 }
 
+//returns the targets of the roads: the container of every source (range 1) and the controller (range 3)
+function getRoadTargets(room) {
+    var targets = [];
+    var sources = room.find(FIND_SOURCES);
+    for(var i = 0; i < sources.length; i++) {
+        var containers = sources[i].pos.findInRange(FIND_STRUCTURES, 1, {filter: (structure) => structure.structureType == STRUCTURE_CONTAINER});
+        if(containers.length > 0) {
+            targets.push({pos: containers[0].pos, range: 1});
+        }
+    }
+    if(room.controller) {
+        targets.push({pos: room.controller.pos, range: 3});
+    }
+    return targets;
+}
+
+//returns the tiles for the roads (from the spawn outwards), the plan is calculated once and saved in the room memory
+//a new plan is calculated if the number of targets changes (for example a new container)
+function getRoadPlan(room) {
+    var targets = getRoadTargets(room);
+
+    //use the saved plan if it was made for the same number of targets
+    if(room.memory.roadPlan && room.memory.roadPlanTargets == targets.length) {
+        return room.memory.roadPlan;
+    }
+
+    //we need a spawn as the start of the ways
+    var spawn = room.find(FIND_MY_SPAWNS)[0];
+    if(!spawn) {
+        return [];
+    }
+
+    var plan = [];
+    for(var i = 0; i < targets.length; i++) {
+        //calculate the way from the spawn to the target (swamps are avoided)
+        var path = room.findPath(spawn.pos, targets[i].pos, {range: targets[i].range, ignoreCreeps: true, plainCost: 2, swampCost: 10});
+
+        //add the tiles to the plan, skip tiles that are already in the plan
+        for(var j = 0; j < path.length; j++) {
+            var step = path[j];
+            if(!_.some(plan, (tile) => tile.x == step.x && tile.y == step.y)) {
+                plan.push({x: step.x, y: step.y});
+            }
+        }
+    }
+
+    //save the plan and the number of targets it was made for
+    room.memory.roadPlan = plan;
+    room.memory.roadPlanTargets = targets.length;
+    return plan;
+}
+
+//places road construction sites on the planned tiles (from the spawn outwards)
+function placeRoads(room) {
+
+    //roads are expensive, wait until the controller has level 2
+    if(room.controller.level < 2) {
+        return;
+    }
+
+    //do not place more than MAX_CONSTRUCTION_SITES
+    var siteCount = room.find(FIND_MY_CONSTRUCTION_SITES).length;
+    if(siteCount >= MAX_CONSTRUCTION_SITES) {
+        return;
+    }
+
+    var plan = getRoadPlan(room);
+    var placed = 0;
+    for(var i = 0; i < plan.length; i++) {
+        var tile = plan[i];
+
+        //skip tiles where something is already built or planned
+        if(room.lookForAt(LOOK_STRUCTURES, tile.x, tile.y).length > 0 || room.lookForAt(LOOK_CONSTRUCTION_SITES, tile.x, tile.y).length > 0) {
+            continue;
+        }
+
+        var result = room.createConstructionSite(tile.x, tile.y, STRUCTURE_ROAD);
+        if(result == OK) {
+            placed++;
+            siteCount++;
+        } else {
+            console.log('Construction: could not place road at ' + tile.x + '/' + tile.y + ': ' + result);
+        }
+
+        //stop if the limit of construction sites is reached
+        if(siteCount >= MAX_CONSTRUCTION_SITES) {
+            break;
+        }
+    }
+    if(placed > 0) {
+        console.log('Construction: placed ' + placed + ' road site(s) in room ' + room.name);
+    }
+}
+
 var constructionManager = {
 
     run: function() {
@@ -259,6 +354,8 @@ var constructionManager = {
             if(missing <= 0) {
                 //nothing is missing anymore, the old warning is not needed anymore
                 delete room.memory.constructionWarning;
+                //the extensions are done, now the roads
+                placeRoads(room);
                 continue;
             }
 
@@ -292,6 +389,12 @@ var constructionManager = {
                 } else {
                     delete room.memory.constructionWarning;
                 }
+            }
+
+            //there is no place for the extensions, so do not wait for them and build the roads
+            if(positions.length == 0) {
+                placeRoads(room);
+                continue;
             }
 
             //place the found extensions
