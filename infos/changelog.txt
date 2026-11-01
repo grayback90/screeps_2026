@@ -1,6 +1,9 @@
 xx.yy.2026
 - 
 
+02.11.2026
+- scout collect for information (for remote harvesting)
+
 01.11.2026
 - scaling upgrader
 - scaling builder
