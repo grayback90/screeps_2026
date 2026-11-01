@@ -20,10 +20,7 @@ Army roles that need to be implemented:
 
 Next Steps:
 ----
-1. optimize moveTo (filter 16) -> 30.10.2026 DONE
-2. streets on solid ground, then on the most used path (filter 17)
-3. skaling upgrader count with energy overflow
-4. update scout information for remote rooms
-5. remoteHarvester (filter 4)
-6. defenseSquad for remote rooms
-7. claimer and reserving
+1. streets on solid ground, then on the most used path (filter 17)
+2. remoteHarvester (filter 4)
+3. defenseSquad for remote rooms
+4. claimer and reserving

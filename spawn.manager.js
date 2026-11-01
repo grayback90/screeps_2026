@@ -14,6 +14,8 @@ var DEFENDER_MARGIN = 1.5; //how much stronger than the enemy the creeps will be
 var MAX_DEFENDERS = 5; //thats the maximum on defenders to spawn
 var REPAIRS_UNDER_ATTACK = 3; //how many wallrepairer in an attack phase
 var TICKRATE_SCOUTCHECK = 50; //the count in which a new calculation is done
+var UPGRADER_STOCK_STEP = 1000; //for this much energy in the containers one more upgrader is needed
+var MAX_UPGRADERS = 5; //maximum number of upgraders
 
 //body patterns for creeps (gets repeated as often as energy allows)
 var bodyPatterns = {
@@ -97,7 +99,7 @@ function sourcesWithContainer(room) {
             sourcesCount ++;
         }
     }
-    return sourcesCount;    
+    return sourcesCount;
 }
 
 //helper function that counts hauler and miner and checks them with the count of container
@@ -146,6 +148,23 @@ function scoutsNeeded(room) {
     return room.memory.scoutsNeeded || 0;
 }
 
+//returns the sum of the energy in all containers of the room
+function containerEnergy(room) {
+    //get all containers of the room
+    var containers = room.find(FIND_STRUCTURES, {filter: (structure) => structure.structureType == STRUCTURE_CONTAINER});
+    //add up the energy of all containers
+    return _.sum(containers, (container) => container.store[RESOURCE_ENERGY]);
+}
+
+
+//returns how many upgraders are needed: one, plus one more for every UPGRADER_STOCK_STEP energy in the containers
+function upgradersNeeded(room) {
+    //how many extra upgraders the energy in the containers can carry
+    var extraUpgraders = Math.floor(containerEnergy(room) / UPGRADER_STOCK_STEP);
+    //at least one, but not more than MAX_UPGRADERS
+    return Math.min(1 + extraUpgraders, MAX_UPGRADERS);
+}
+
 //spawn queue
 //priority of the roles (lower number = higher priority)
 var creepRoles = {
@@ -159,8 +178,8 @@ var creepRoles = {
     towerFeeder: { min: 1, pattern: [WORK, CARRY, MOVE], maxRepeats: 3, priority: 5, condition: towersInTheRoom },
     //condition to spawn wallRepairer: walls or ramparts in the room > 0
     wallRepairer: { min: wallRepairersNeeded, pattern: [WORK, CARRY, MOVE], maxRepeats: 3, priority: 6, condition: wallOrRampartInTheRoom },
-    upgrader: { min: 1, pattern: [WORK, CARRY, MOVE], maxRepeats: 3, priority: 7 },
-    builder: { min: 1, pattern: [WORK, CARRY, MOVE], maxRepeats: 3, priority: 8 }
+    upgrader: { min: upgradersNeeded, pattern: [WORK, CARRY, MOVE], maxRepeats: 3, priority: 7 },
+    builder: { min: 3, pattern: [WORK, CARRY, MOVE], maxRepeats: 3, priority: 8 }
 };
 
 //builds a body: repeats the pattern as often as energy and maxRepeats allow
@@ -185,10 +204,10 @@ function logEvery(message) {
 }
 
 var spawnManager = {
- 
+
     run: function() {
         var spawn = Game.spawns['Spawn1'];
-        
+
         //does the spawn exist?
         if(!spawn) {
            logEvery('Spawn not found!');
@@ -199,16 +218,16 @@ var spawnManager = {
         if(spawn.spawning) {
             return;
         }
- 
+
         //count the creeps of every role in creepRoles
         var counts = {};
         for(var countRole in creepRoles) {
             counts[countRole] = _.filter(Game.creeps, (creep) => creep.memory.role == countRole).length;
         }
-    
+
         //max energy the room can hold (spawn + extensions)
         var energy = spawn.room.energyCapacityAvailable;
- 
+
         //spawn queue: check for missing creeps in order of priority
         var queue = [];
         for(var role in creepRoles) {
@@ -282,5 +301,5 @@ var spawnManager = {
         }
     }
 };
- 
+
 module.exports = spawnManager;
