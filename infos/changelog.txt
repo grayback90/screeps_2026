@@ -2,7 +2,8 @@ xx.yy.2026
 - 
 
 01.11.2026
-- scaling upgraders
+- scaling upgrader
+- scaling builder
 
 31.10.2026
 - build streets (simple spawn -> container and spawn -> controller)

@@ -16,6 +16,8 @@ var REPAIRS_UNDER_ATTACK = 3; //how many wallrepairer in an attack phase
 var TICKRATE_SCOUTCHECK = 50; //the count in which a new calculation is done
 var UPGRADER_STOCK_STEP = 1000; //for this much energy in the containers one more upgrader is needed
 var MAX_UPGRADERS = 5; //maximum number of upgraders
+var SITES_PER_BUILDER = 2; //every amount of this variable one builder is spawned
+var MAX_BUILDERS = 3; //maximum of builders in the room
 
 //body patterns for creeps (gets repeated as often as energy allows)
 var bodyPatterns = {
@@ -156,13 +158,20 @@ function containerEnergy(room) {
     return _.sum(containers, (container) => container.store[RESOURCE_ENERGY]);
 }
 
-
 //returns how many upgraders are needed: one, plus one more for every UPGRADER_STOCK_STEP energy in the containers
 function upgradersNeeded(room) {
     //how many extra upgraders the energy in the containers can carry
     var extraUpgraders = Math.floor(containerEnergy(room) / UPGRADER_STOCK_STEP);
     //at least one, but not more than MAX_UPGRADERS
     return Math.min(1 + extraUpgraders, MAX_UPGRADERS);
+}
+
+//returns how many builders are needed: zero, plus one more for ervery SITES_PER_BUILDER active construction sites
+function buildersNeeded(room) {
+    //amount of active construction sites
+    var constructionSitesCount = room.find(FIND_MY_CONSTRUCTION_SITES).length;
+    //calculate the amount of builders
+    return Math.min(Math.ceil((constructionSitesCount / SITES_PER_BUILDER)), MAX_BUILDERS);
 }
 
 //spawn queue
@@ -178,8 +187,8 @@ var creepRoles = {
     towerFeeder: { min: 1, pattern: [WORK, CARRY, MOVE], maxRepeats: 3, priority: 5, condition: towersInTheRoom },
     //condition to spawn wallRepairer: walls or ramparts in the room > 0
     wallRepairer: { min: wallRepairersNeeded, pattern: [WORK, CARRY, MOVE], maxRepeats: 3, priority: 6, condition: wallOrRampartInTheRoom },
-    upgrader: { min: upgradersNeeded, pattern: [WORK, CARRY, MOVE], maxRepeats: 3, priority: 7 },
-    builder: { min: 3, pattern: [WORK, CARRY, MOVE], maxRepeats: 3, priority: 8 }
+    builder: { min: buildersNeeded, pattern: [WORK, CARRY, MOVE], maxRepeats: 3, priority: 7 },
+    upgrader: { min: upgradersNeeded, pattern: [WORK, CARRY, MOVE], maxRepeats: 3, priority: 8 }
 };
 
 //builds a body: repeats the pattern as often as energy and maxRepeats allow
