@@ -22,5 +22,11 @@ Next Steps:
 ----
 1. streets on solid ground, then on the most used path (filter 17)
 2. remoteHarvester (filter 4)
+    2a. Remote-Räume auswählen und merken. Aus getRemoteRooms wird eine feste Liste im Memory: welche Räume, welche Sources darin.
+    2b. Der Remote-Miner. Er läuft in den Nachbarraum und erntet dort. Zunächst ohne Container: Er erntet und legt die Energie auf den Boden. Das reicht, um den Ablauf zu testen.
+    2c. Der Container im Remote-Raum. Ein Builder baut ihn, und der Miner steht darauf.
+    2d. Der Remote-Hauler. Er holt die Energie im Nachbarraum ab und bringt sie zum Heimatraum.
+    2e. Der Rückzug bei Feinden. Die Remote-Creeps verlassen den Raum, wenn Feinde auftauchen.
+    2f. Der Spawn-Manager. Die Zahl der Remote-Miner und -Hauler hängt von der Zahl der geeigneten Remote-Räume ab.
 3. defenseSquad for remote rooms
 4. claimer and reserving
