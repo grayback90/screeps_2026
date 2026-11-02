@@ -1,0 +1,18 @@
+/**********************************************
+*
+* file: flyer.txt
+*
+* Just a text-file to change the first image of
+* the instagram post.
+*
+**********************************************/
+               
+               
+               Screeps World
+                02/11/2026
+        - scout collect more information
+           (for remote harvesting)
+
+
+
+https://www.ray.so/#code=&background=true&theme=meadow&darkMode=true&lineNumbers=false&title=&language=javascript&padding=128

@@ -17,3 +17,5 @@ storage.db['rooms.objects'].update({ type: "spawn" }, { $set: { storeCapacityRes
 storage.db['rooms.objects'].update({ type: "extension" }, { $set: { storeCapacityResource: { energy: 50 } } });
 storage.db['rooms.objects'].update({ type: "tower" }, { $set: { storeCapacityResource: { energy: 1000 } } });
 --> fixing the steam localhost bug if the spawn has no energy
+
+_.forEach(Memory.rooms, (room) => delete room.scout) -> deletes the memory of the scout, so he needs to check again

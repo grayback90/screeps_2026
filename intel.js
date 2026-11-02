@@ -45,6 +45,7 @@ function getRoomsInRange(home, range) {
 
 var intel = {
 
+    //records the rooms and saves it to the scouts memory
     recordRoom: function(room) {
         //saves the time when the room is recorded
         var info = {time: Game.time};
@@ -73,8 +74,25 @@ var intel = {
         //save the exits
         info.exits = Game.map.describeExits(room.name);
 
-        room.memory.scout = info;
+        //keeper-lairs (we want to avoid these)
+        info.keeperLairs = room.find(FIND_STRUCTURES, {filter: structure => structure.structureType == STRUCTURE_KEEPER_LAIR}).length;
 
+        //sources and the coordinates
+        info.sourceList = [];
+        var sources = room.find(FIND_SOURCES);
+        for(var i = 0; i < sources.length; i++) {
+            info.sourceList.push({id: sources[i].id, x: sources[i].pos.x, y: sources[i].pos.y});
+        }
+
+        //controller position
+        if (room.controller) {
+            info.controllerPos = {x: room.controller.pos.x, y: room.controller.pos.y};
+        } else {
+            info.controllerPos = null;
+        }
+
+        //save all information in the scouts memory
+        room.memory.scout = info;
     },
 
     //returns the name of the next room for the scout (never seen rooms first, then old ones), or null if there is nothing to scout
@@ -121,6 +139,52 @@ var intel = {
             }
         }
         return best;
+    },
+
+    //returns the names of the neighbour rooms that are good for remote harvesting
+    getRemoteRooms: function(home) {
+        var remoteRooms = [];
+
+        //check all direct neighbour rooms of the home room
+        var exits = Game.map.describeExits(home);
+        for(var direction in exits) {
+            var name = exits[direction];
+
+            //skip rooms that can not be entered
+            if(Game.map.getRoomStatus(name).status == 'closed') {
+                continue;
+            }
+
+            //get the saved data of the room, skip the room if there is none
+            var data = Memory.rooms && Memory.rooms[name] && Memory.rooms[name].scout;
+            if(!data) {
+                continue;
+            }
+
+            //skip rooms with old data (the situation could have changed) or data without the keeper-lairs info
+            if(Game.time - data.time > SCOUT_STALE || data.keeperLairs === undefined) {
+                continue;
+            }
+
+            //skip rooms without sources
+            if(data.sources == 0) {
+                continue;
+            }
+
+            //skip rooms that belong to somebody or are reserved
+            if(data.owner || data.reservedBy) {
+                continue;
+            }
+
+            //skip dangerous rooms: keeper-lairs, enemy creeps or enemy structures
+            if(data.keeperLairs > 0 || data.hostiles > 0 || data.hostileStructures > 0) {
+                continue;
+            }
+
+            remoteRooms.push(name);
+        }
+
+        return remoteRooms;
     }
 };
 
