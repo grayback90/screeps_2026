@@ -8,9 +8,8 @@
 *
 **********************************************/
 
-//constants
-var SAFE_MODE_SPAWN_HITS = 0.6; //under 60% of the spawn hitpoints there is an alarm
-var SAFE_MODE_ENABLED = false; //false = no safe mode, just a log message / true = safe mode will be activated if needed
+//import
+var config = require('config');
 
 //helper function that activates the safe mode if a spawn loses hitpoints while enemies are in the room
 function checkSafeMode(room) {
@@ -29,10 +28,10 @@ function checkSafeMode(room) {
     var spawns = room.find(FIND_MY_SPAWNS);
     for(var i = 0; i < spawns.length; i++) {
          //the spawn has lost too many hitpoints -> alarm
-        if(spawns[i].hits < spawns[i].hitsMax * SAFE_MODE_SPAWN_HITS) {
+        if(spawns[i].hits < spawns[i].hitsMax * config.SAFE_MODE_SPAWN_HITS) {
             var message = 'SAFE MODE: spawn in room ' + room.name + ' has ' + spawns[i].hits + ' hitpoints';
  
-            if(SAFE_MODE_ENABLED) {
+            if(config.SAFE_MODE_ENABLED) {
                 //really activate the safe mode
                 var result = controller.activateSafeMode();
                 console.log(message + ', activated: ' + result);
