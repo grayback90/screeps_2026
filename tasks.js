@@ -8,6 +8,7 @@
 
 //imports
 var intel = require('intel');
+var remote = require('remote');
 
 //constants
 var TOWER_FILL_LIMIT = 0.9; //tower is full if he has more than 90% energy, then he can be fed by a creep
@@ -409,6 +410,31 @@ function moveToTarget(creep, target, options) {
     return creep.moveTo(target, options);
 }
 
+//returns an entry {id, x, y} of a source or null
+function getRemoteSourceEntry(creep, home) {
+    //get the list of remote sources
+    var remoteSources = remote.getRemoteSources(home);
+
+    //use the source in the memory if he has one
+    var sourceMemory = creep.memory.remoteSourceId;
+    //if there is already a source in memory, use it
+    if(sourceMemory) {
+        //check if the entrys id is in the memory
+        var sourceMemoryId = _.find(entries, (entry) => entry.id == creep.memory.remoteSourceId);
+        if(sourceMemoryId) {
+            return sourceMemoryId;
+        }
+    }
+
+    //search a free source
+    for(var i = 0; i < remoteSources.length; i++) {
+        
+    }
+
+
+
+}
+
 var tasks = {
     //switches between the fetch task and the work task of a role (empty -> fetch, full -> work)
     //fetchTask is optional, the default is harvest
@@ -697,6 +723,50 @@ var tasks = {
             creep.say('Scouting');
         }
         return;
+    },
+    remoteMine: function(creep) {
+        //save the home room if he has none
+        if(!creep.memory.home) {
+            creep.memory.home = creep.room.name;
+        }
+
+        //home room as object
+        var home = Game.rooms[creep.memory.home];
+
+        //remote room
+        var remoteRoom = remote.getRemoteRoom(home);
+        if(!remoteRoom) {
+            creep.say('No Room');
+            return;
+        }
+
+        //get the source in the remote room
+        var remoteSource = getRemoteSourceEntry(creep, home);
+        if(!remoteSource) {
+            creep.say('No Post');
+            return;
+        }
+
+        //walking to the remote source
+        if(creep.room.name != remoteRoom) {
+            moveToTarget(creep, new RoomPosition(entry.x, entry.y, remoteRoom), {range: 1});
+            creep.say('To Remote');
+            return;
+        }
+
+        //mining
+        var source = Game.getObjectById(entry.id);
+        var result = creep.harvest(source);
+
+        //mining, walking or waiting
+        if(result == ERR_NOT_IN_RANGE) {
+            moveToTarget(creep, source);
+            creep.say('To Source');
+        } else if(result == OK) {
+            creep.say('Mining');
+        } else {
+            creep.say('Waiting');
+        }
     }
 };
 

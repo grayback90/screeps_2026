@@ -18,6 +18,7 @@ var UPGRADER_STOCK_STEP = 1000; //for this much energy in the containers one mor
 var MAX_UPGRADERS = 5; //maximum number of upgraders
 var SITES_PER_BUILDER = 2; //every amount of this variable one builder is spawned
 var MAX_BUILDERS = 3; //maximum of builders in the room
+var TOWER_FEEDER_UNDER_ATTACK = 3; //how many tower feeder in an attack phase
 
 //body patterns for creeps (gets repeated as often as energy allows)
 var bodyPatterns = {
@@ -58,6 +59,16 @@ function wallRepairersNeeded(room) {
     //if there are enemys the min is "REPAIRS_UNDER_ATTACK"
     if (room.memory.hostileCount > 0) {
         return REPAIRS_UNDER_ATTACK;
+    } else {
+        return 1;
+    }
+}
+
+//helper function to decide the minimum on wallrepairers needed
+function towerFeederNeeded(room) {
+    //if there are enemys the min is "REPAIRS_UNDER_ATTACK"
+    if (room.memory.hostileCount > 0) {
+        return TOWER_FEEDER_UNDER_ATTACK;
     } else {
         return 1;
     }
@@ -184,11 +195,12 @@ var creepRoles = {
     miner: { min: sourcesWithContainer, pattern: [WORK, WORK, MOVE], maxRepeats: 2, priority: 3 },
     hauler: { min: sourcesWithContainer, pattern: [CARRY, MOVE], maxRepeats: 6, priority: 4 },
     //condition to spawn towerFeeder: towers in the room > 0
-    towerFeeder: { min: 1, pattern: [WORK, CARRY, MOVE], maxRepeats: 3, priority: 5, condition: towersInTheRoom },
+    towerFeeder: { min: towerFeederNeeded, pattern: [WORK, CARRY, MOVE], maxRepeats: 3, priority: 5, condition: towersInTheRoom },
     //condition to spawn wallRepairer: walls or ramparts in the room > 0
     wallRepairer: { min: wallRepairersNeeded, pattern: [WORK, CARRY, MOVE], maxRepeats: 3, priority: 6, condition: wallOrRampartInTheRoom },
     builder: { min: buildersNeeded, pattern: [WORK, CARRY, MOVE], maxRepeats: 3, priority: 7 },
-    upgrader: { min: upgradersNeeded, pattern: [WORK, CARRY, MOVE], maxRepeats: 3, priority: 8 }
+    upgrader: { min: upgradersNeeded, pattern: [WORK, CARRY, MOVE], maxRepeats: 3, priority: 8 },
+    remoteMiner: {min: 1, pattern: [WORK, WORK, MOVE, MOVE], maxRepeats: 3, priority: 9}
 };
 
 //builds a body: repeats the pattern as often as energy and maxRepeats allow

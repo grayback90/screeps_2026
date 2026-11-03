@@ -17,6 +17,7 @@ var roleDefender = require('role.defender');
 var roleMiner = require('role.miner');
 var roleHauler = require('role.hauler');
 var roleScout = require('role.scout');
+var roleRemoteMiner = require('role.remoteminer');
 var defense = require('defense');
 var towerManager = require('tower.manager');
 var constructionManager = require('construction.manager');
@@ -70,6 +71,9 @@ module.exports.loop = function () {
         }
         if(creep.memory.role == 'scout') {
             roleScout.run(creep);
+        }
+        if(creep.memory.role == 'remoteMiner') {
+            roleRemoteMiner.run(creep);
         }
     }
 }
