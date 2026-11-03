@@ -412,27 +412,36 @@ function moveToTarget(creep, target, options) {
 
 //returns an entry {id, x, y} of a source or null
 function getRemoteSourceEntry(creep, home) {
-    //get the list of remote sources
-    var remoteSources = remote.getRemoteSources(home);
+    // Get all remote sources for the home room
+    var entries = remote.getRemoteSources(home);
 
-    //use the source in the memory if he has one
-    var sourceMemory = creep.memory.remoteSourceId;
-    //if there is already a source in memory, use it
-    if(sourceMemory) {
-        //check if the entrys id is in the memory
-        var sourceMemoryId = _.find(entries, (entry) => entry.id == creep.memory.remoteSourceId);
-        if(sourceMemoryId) {
-            return sourceMemoryId;
+    // Check if the creep already has a remote source assigned
+    if (creep.memory.remoteSourceId) {
+        var assignedEntry = _.find(entries, (entry) => {
+            return entry.id == creep.memory.remoteSourceId;
+        });
+
+        if (assignedEntry) {
+            return assignedEntry;
         }
     }
 
-    //search a free source
-    for(var i = 0; i < remoteSources.length; i++) {
-        
+    // Find an unoccupied remote source
+    for (var entry of entries) {
+        // Count remote miners assigned to this source
+        var assignedCreeps = _.filter(Game.creeps, (creeps) => {
+            return creeps.memory.role == 'remoteMiner' && creeps.memory.remoteSourceId == entry.id;
+        });
+
+        // Assign the source if no remote miner is using it
+        if (assignedCreeps.length == 0) {
+            creep.memory.remoteSourceId = entry.id;
+            return entry;
+        }
     }
 
-
-
+    // No free remote source available
+    return null;
 }
 
 var tasks = {
