@@ -1,6 +1,10 @@
 xx.yy.2026
 - 
 
+03.11.2026
+- choose remote rooms and save them in the memory
+- created the config-file but will be filled later (just so i dont forget it)
+
 02.11.2026
 - scout collect for information (for remote harvesting)
 
