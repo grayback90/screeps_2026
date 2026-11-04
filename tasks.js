@@ -758,13 +758,13 @@ var tasks = {
 
         //walking to the remote source
         if(creep.room.name != remoteRoom) {
-            moveToTarget(creep, new RoomPosition(entry.x, entry.y, remoteRoom), {range: 1});
+            moveToTarget(creep, new RoomPosition(remoteSource.x, remoteSource.y, remoteRoom), {range: 1});
             creep.say('To Remote');
             return;
         }
 
         //mining
-        var source = Game.getObjectById(entry.id);
+        var source = Game.getObjectById(remoteSource.id);
         var result = creep.harvest(source);
 
         //mining, walking or waiting
