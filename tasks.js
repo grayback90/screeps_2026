@@ -9,16 +9,7 @@
 //imports
 var intel = require('intel');
 var remote = require('remote');
-
-//constants
-var TOWER_FILL_LIMIT = 0.9; //tower is full if he has more than 90% energy, then he can be fed by a creep
-var WALL_HITPOINTS_BY_LEVEL = {1: 0, 2: 10000, 3: 30000, 4: 100000, 5: 300000, 6: 1000000, 7: 3000000, 8: 10000000}; //target hitpoints for walls and ramparts by controller level
-var ATTACK_ZONE_RANGE = 3; //if a wall is in this range of an hostile creep, it counts as attacked
-var PICKUP_MIN_ENERGY = 50; //energy in the floor below this cap will not be collected
-var FETCH_MIN_ENERGY = 50; //a hauler only fetches from containers with at least this much energy
-var CONTAINER_SURPLUS = 500; //if a container has more than this threshold it counts as overflowing
-var REUSE_PATH = 20; //creep calculates new path in this amount of ticks (standard is 5)
-var DEBUG_PATHS = false; //disable/enable the visualisation of the path (false uses less CPU)
+var config = require('config');
 
 //returns the source a creep should harvest from
 //reuses the source from the creep's memory, otherwise picks the source with the fewest creeps
@@ -118,14 +109,14 @@ function getTowerFeedTarget(creep) {
     //try to get the tower that is saved in the creep's memory
     var towerTarget = Game.getObjectById(creep.memory.towerFeedTargetId);
     //the creep already has a tower, use it if it is not full
-    if(towerTarget && towerTarget.store[RESOURCE_ENERGY] < towerTarget.store.getCapacity(RESOURCE_ENERGY) * TOWER_FILL_LIMIT) {
+    if(towerTarget && towerTarget.store[RESOURCE_ENERGY] < towerTarget.store.getCapacity(RESOURCE_ENERGY) * config.TOWER_FILL_LIMIT) {
         //return the tower from memory
         return towerTarget;
     }
 
     //no tower in memory (or it is full), find the tower with the lowest energy that is not full
     var towers = creep.room.find(FIND_MY_STRUCTURES, {
-        filter: (structure) => structure.structureType == STRUCTURE_TOWER && structure.store[RESOURCE_ENERGY] < structure.store.getCapacity(RESOURCE_ENERGY) * TOWER_FILL_LIMIT
+        filter: (structure) => structure.structureType == STRUCTURE_TOWER && structure.store[RESOURCE_ENERGY] < structure.store.getCapacity(RESOURCE_ENERGY) * config.TOWER_FILL_LIMIT
     });
     //there is no tower that needs to be filled
     if(towers.length == 0) {
@@ -157,7 +148,7 @@ function getTowerFeedTarget(creep) {
 //get the RCL (RoomControllerLevel) and checks the hitpoints of a wall or rampart
 function getWallTarget(room) {
     var rcl = room.controller.level;
-    return WALL_HITPOINTS_BY_LEVEL[rcl] || 0;
+    return config.WALL_HITPOINTS_BY_LEVEL[rcl] || 0;
 }
 
 //returns the wall or rampart a creep should repair
@@ -195,9 +186,9 @@ function getRepairTarget(creep) {
     //under attack: prefer the walls and ramparts that are near an enemy
     if(underAttack) {
         var hostiles = creep.room.find(FIND_HOSTILE_CREEPS);
-        //keep only the targets that are within ATTACK_ZONE_RANGE of at least one enemy
+        //keep only the targets that are within config.ATTACK_ZONE_RANGE of at least one enemy
         var threatened = _.filter(repairTargets, (structure) => {
-            return _.some(hostiles, (hostile) => structure.pos.getRangeTo(hostile) <= ATTACK_ZONE_RANGE);
+            return _.some(hostiles, (hostile) => structure.pos.getRangeTo(hostile) <= config.ATTACK_ZONE_RANGE);
         });
         //if there are threatened targets, only look at them, otherwise keep the full list
         if(threatened.length > 0) {
@@ -249,9 +240,9 @@ function getDefensePost(creep, hostile) {
 //else it returns false
 function collectEnergy(creep) {
     //search for dropped energy, tombstones and ruins where the energy is like or over the minimum energy that we will pickup
-    var droppedEnergy = creep.room.find(FIND_DROPPED_RESOURCES, {filter: (resource) => resource.resourceType == RESOURCE_ENERGY && resource.amount >= PICKUP_MIN_ENERGY});
-    var tombstoneEnergy = creep.room.find(FIND_TOMBSTONES, {filter: (tombstone) => tombstone.store[RESOURCE_ENERGY] >= PICKUP_MIN_ENERGY});
-    var ruinsEnergy = creep.room.find(FIND_RUINS, {filter: (ruin) => ruin.store[RESOURCE_ENERGY] >= PICKUP_MIN_ENERGY});
+    var droppedEnergy = creep.room.find(FIND_DROPPED_RESOURCES, {filter: (resource) => resource.resourceType == RESOURCE_ENERGY && resource.amount >= config.PICKUP_MIN_ENERGY});
+    var tombstoneEnergy = creep.room.find(FIND_TOMBSTONES, {filter: (tombstone) => tombstone.store[RESOURCE_ENERGY] >= config.PICKUP_MIN_ENERGY});
+    var ruinsEnergy = creep.room.find(FIND_RUINS, {filter: (ruin) => ruin.store[RESOURCE_ENERGY] >= config.PICKUP_MIN_ENERGY});
     //combine the three lists
     var energyOnTheFloor = droppedEnergy.concat(tombstoneEnergy, ruinsEnergy);
 
@@ -323,7 +314,7 @@ function getFetchTarget(creep) {
     //try to get the container that is saved in the creep's memory
     var container = Game.getObjectById(creep.memory.fetchTargetId);
     //the container still has enough energy, use it
-    if(container && container.store[RESOURCE_ENERGY] >= FETCH_MIN_ENERGY) {
+    if(container && container.store[RESOURCE_ENERGY] >= config.FETCH_MIN_ENERGY) {
         return container;
     }
  
@@ -331,7 +322,7 @@ function getFetchTarget(creep) {
     var containers = creep.room.find(FIND_STRUCTURES, {
         filter: (structure) => {
             return structure.structureType == STRUCTURE_CONTAINER &&
-                    structure.store[RESOURCE_ENERGY] >= FETCH_MIN_ENERGY &&
+                    structure.store[RESOURCE_ENERGY] >= config.FETCH_MIN_ENERGY &&
                     structure.pos.findInRange(FIND_SOURCES, 1).length > 0;
         }
     });
@@ -364,7 +355,7 @@ function getSupplyTarget(creep) {
     //get the container from memory
     var container = Game.getObjectById(creep.memory.gatherTargetId);
     //if there is no container in memory
-    if(container && container.store[RESOURCE_ENERGY] >= FETCH_MIN_ENERGY) {
+    if(container && container.store[RESOURCE_ENERGY] >= config.FETCH_MIN_ENERGY) {
         return container;
     }
 
@@ -372,7 +363,7 @@ function getSupplyTarget(creep) {
     var containers = creep.room.find(FIND_STRUCTURES, {
         filter: (structure) => {
             return structure.structureType == STRUCTURE_CONTAINER &&
-                    structure.store[RESOURCE_ENERGY] >= CONTAINER_SURPLUS;
+                    structure.store[RESOURCE_ENERGY] >= config.CONTAINER_SURPLUS;
         }
     });
 
@@ -396,10 +387,10 @@ function moveToTarget(creep, target, options) {
     options = options || {};
     //set the standard values if they are not set
     if(options.reusePath === undefined) {
-        options.reusePath = REUSE_PATH;
+        options.reusePath = config.REUSE_PATH;
     }
     //draw the path only in debug mode (needs more CPU)
-    if(DEBUG_PATHS) {
+    if(config.DEBUG_PATHS) {
         //check if format is set, if not set it to standard
         if(!options.visualizePathStyle) {
             options.visualizePathStyle = {stroke: '#ffffff'}; 

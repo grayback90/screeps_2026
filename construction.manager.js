@@ -8,10 +8,7 @@
 *
 **********************************************/
 
-//constants
-var EXTENSION_SEARCH_RANGES = [6, 8, 10]; //how far from the spawn the extensions are placed (in tiles), the next range is used if there are not enough free tiles
-var CONSTRUCTION_INTERVAL = 50; //the manager checks every x ticks if something has to be built
-var MAX_CONSTRUCTION_SITES = 5; //max number of construction sites in a room at the same time
+var config = require('config');
 
 //returns the positions for the next extensions (closest to the spawn first)
 //pattern: checkerboard, so the creeps can still walk between the extensions
@@ -138,9 +135,9 @@ function getContainerPosition(room, source) {
 //places a container construction site next to every source that has no container yet
 function placeContainers(room) {
 
-    //count the construction sites, we do not want to place more than MAX_CONSTRUCTION_SITES
+    //count the construction sites, we do not want to place more than config.MAX_CONSTRUCTION_SITES
     var siteCount = room.find(FIND_MY_CONSTRUCTION_SITES).length;
-    if(siteCount >= MAX_CONSTRUCTION_SITES) {
+    if(siteCount >= config.MAX_CONSTRUCTION_SITES) {
         return;
     }
 
@@ -170,14 +167,14 @@ function placeContainers(room) {
         }
 
         //stop if the limit of construction sites is reached
-        if(siteCount >= MAX_CONSTRUCTION_SITES) {
+        if(siteCount >= config.MAX_CONSTRUCTION_SITES) {
             return;
         }
     }
 }
 
 //places a tower construction site if the controller level allows more towers
-//this ignores MAX_CONSTRUCTION_SITES on purpose, the tower must not wait for the extensions
+//this ignores config.MAX_CONSTRUCTION_SITES on purpose, the tower must not wait for the extensions
 function placeTowers(room) {
     //how many towers are allowed on this controller level
     var allowed = CONTROLLER_STRUCTURES[STRUCTURE_TOWER][room.controller.level] || 0;
@@ -197,8 +194,8 @@ function placeTowers(room) {
 
     //search for a free place with a small range first, then with a bigger range
     var positions = [];
-    for(var r = 0; r < EXTENSION_SEARCH_RANGES.length; r++) {
-        positions = getExtensionPositions(room, 1, EXTENSION_SEARCH_RANGES[r]);
+    for(var r = 0; r < config.EXTENSION_SEARCH_RANGES.length; r++) {
+        positions = getExtensionPositions(room, 1, config.EXTENSION_SEARCH_RANGES[r]);
         if(positions.length > 0) {
             break;
         }
@@ -279,9 +276,9 @@ function placeRoads(room) {
         return;
     }
 
-    //do not place more than MAX_CONSTRUCTION_SITES
+    //do not place more than config.MAX_CONSTRUCTION_SITES
     var siteCount = room.find(FIND_MY_CONSTRUCTION_SITES).length;
-    if(siteCount >= MAX_CONSTRUCTION_SITES) {
+    if(siteCount >= config.MAX_CONSTRUCTION_SITES) {
         return;
     }
 
@@ -304,7 +301,7 @@ function placeRoads(room) {
         }
 
         //stop if the limit of construction sites is reached
-        if(siteCount >= MAX_CONSTRUCTION_SITES) {
+        if(siteCount >= config.MAX_CONSTRUCTION_SITES) {
             break;
         }
     }
@@ -317,8 +314,8 @@ var constructionManager = {
 
     run: function() {
 
-        //check only every CONSTRUCTION_INTERVAL ticks, this saves cpu
-        if(Game.time % CONSTRUCTION_INTERVAL != 0) {
+        //check only every config.CONSTRUCTION_INTERVAL ticks, this saves cpu
+        if(Game.time % config.CONSTRUCTION_INTERVAL != 0) {
             return;
         }
 
@@ -360,7 +357,7 @@ var constructionManager = {
             }
 
             //how many new construction sites are allowed right now
-            var freeSlots = MAX_CONSTRUCTION_SITES - sites.length;
+            var freeSlots = config.MAX_CONSTRUCTION_SITES - sites.length;
             if(freeSlots <= 0) {
                 continue;
             }
@@ -370,8 +367,8 @@ var constructionManager = {
 
             //search with a small range first, use a bigger range only if there are not enough free tiles
             var positions = [];
-            for(var r = 0; r < EXTENSION_SEARCH_RANGES.length; r++) {
-                positions = getExtensionPositions(room, wanted, EXTENSION_SEARCH_RANGES[r]);
+            for(var r = 0; r < config.EXTENSION_SEARCH_RANGES.length; r++) {
+                positions = getExtensionPositions(room, wanted, config.EXTENSION_SEARCH_RANGES[r]);
                 if(positions.length >= wanted) {
                     break;
                 }

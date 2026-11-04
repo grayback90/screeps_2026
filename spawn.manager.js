@@ -10,18 +10,6 @@ var intel = require('intel');
 var remote = require('remote');
 var config = require('config');
 
-//constants
-var LOG_INTERVAL = 20; //log interval in ticks
-var DEFENDER_MARGIN = 1.5; //how much stronger than the enemy the creeps will be
-var MAX_DEFENDERS = 5; //thats the maximum on defenders to spawn
-var REPAIRS_UNDER_ATTACK = 3; //how many wallrepairer in an attack phase
-var TICKRATE_SCOUTCHECK = 50; //the count in which a new calculation is done
-var UPGRADER_STOCK_STEP = 1000; //for this much energy in the containers one more upgrader is needed
-var MAX_UPGRADERS = 5; //maximum number of upgraders
-var SITES_PER_BUILDER = 2; //every amount of this variable one builder is spawned
-var MAX_BUILDERS = 3; //maximum of builders in the room
-var TOWER_FEEDER_UNDER_ATTACK = 1; //how many tower feeder in an attack phase
-
 //body patterns for creeps (gets repeated as often as energy allows)
 var bodyPatterns = {
     //emergency body pattern (used when energy is low)
@@ -50,17 +38,17 @@ function defendersNeeded(room) {
     }
 
     //calculate the defenders needed
-    var defendersCount = Math.ceil(room.memory.threat * DEFENDER_MARGIN / partsPerDefender);
+    var defendersCount = Math.ceil(room.memory.threat * config.DEFENDER_MARGIN / partsPerDefender);
 
     //return the count of defenders
-    return Math.min(Math.max(1, defendersCount), MAX_DEFENDERS);
+    return Math.min(Math.max(1, defendersCount), config.MAX_DEFENDERS);
 }
 
 //helper function to decide the minimum on wallrepairers needed
 function wallRepairersNeeded(room) {
-    //if there are enemys the min is "REPAIRS_UNDER_ATTACK"
+    //if there are enemys the min is "config.REPAIRS_UNDER_ATTACK"
     if (room.memory.hostileCount > 0) {
-        return REPAIRS_UNDER_ATTACK;
+        return config.REPAIRS_UNDER_ATTACK;
     } else {
         return 1;
     }
@@ -68,9 +56,9 @@ function wallRepairersNeeded(room) {
 
 //helper function to decide the minimum on towerfeeder needed
 function towerFeederNeeded(room) {
-    //if there are enemys the min is "TOWER_FEEDER_UNDER_ATTACK"
+    //if there are enemys the min is "config.TOWER_FEEDER_UNDER_ATTACK"
     if (room.memory.hostileCount > 0) {
-        return TOWER_FEEDER_UNDER_ATTACK;
+        return config.TOWER_FEEDER_UNDER_ATTACK;
     } else {
         return 1;
     }
@@ -152,8 +140,8 @@ function harvestersNeeded(room) {
 //helper function to check if a scout is needed
 //returns how many scouts are needed
 function scoutsNeeded(room) {
-    //check only all if the ticks=TICKRATE_SCOUTCHECK
-    if(!room.memory.scoutCheck || (Game.time - room.memory.scoutCheck >= TICKRATE_SCOUTCHECK)) {
+    //check only all if the ticks=config.TICKRATE_SCOUTCHECK
+    if(!room.memory.scoutCheck || (Game.time - room.memory.scoutCheck >= config.TICKRATE_SCOUTCHECK)) {
         //simple test-object
         var target = intel.getScoutTarget({memory: {home: room.name}, room: room});
         room.memory.scoutsNeeded = target ? 1 : 0;
@@ -171,20 +159,20 @@ function containerEnergy(room) {
     return _.sum(containers, (container) => container.store[RESOURCE_ENERGY]);
 }
 
-//returns how many upgraders are needed: one, plus one more for every UPGRADER_STOCK_STEP energy in the containers
+//returns how many upgraders are needed: one, plus one more for every config.UPGRADER_STOCK_STEP energy in the containers
 function upgradersNeeded(room) {
     //how many extra upgraders the energy in the containers can carry
-    var extraUpgraders = Math.floor(containerEnergy(room) / UPGRADER_STOCK_STEP);
-    //at least one, but not more than MAX_UPGRADERS
-    return Math.min(1 + extraUpgraders, MAX_UPGRADERS);
+    var extraUpgraders = Math.floor(containerEnergy(room) / config.UPGRADER_STOCK_STEP);
+    //at least one, but not more than config.MAX_UPGRADERS
+    return Math.min(1 + extraUpgraders, config.MAX_UPGRADERS);
 }
 
-//returns how many builders are needed: zero, plus one more for ervery SITES_PER_BUILDER active construction sites
+//returns how many builders are needed: zero, plus one more for ervery config.SITES_PER_BUILDER active construction sites
 function buildersNeeded(room) {
     //amount of active construction sites
     var constructionSitesCount = room.find(FIND_MY_CONSTRUCTION_SITES).length;
     //calculate the amount of builders
-    return Math.min(Math.ceil((constructionSitesCount / SITES_PER_BUILDER)), MAX_BUILDERS);
+    return Math.min(Math.ceil((constructionSitesCount / config.SITES_PER_BUILDER)), config.MAX_BUILDERS);
 }
 
 //returns how many sources are in the remote room
@@ -229,9 +217,9 @@ function buildBody(pattern, energy, maxRepeats) {
     return body;
 }
 
-//logs a message every LOG_INTERVAL ticks
+//logs a message every config.LOG_INTERVAL ticks
 function logEvery(message) {
-    if(Game.time % LOG_INTERVAL == 0) {
+    if(Game.time % config.LOG_INTERVAL == 0) {
         console.log(message);
     }
 }

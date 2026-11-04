@@ -8,18 +8,16 @@
 **********************************************/
 
 var intel = require('intel');
-
-//constants
-var REMOTE_CHECK_INTERVAL = 100; //the remote room is checked again every x ticks
+var config = require('config');
 
 var remote = {
 
     //returns the name of the remote room (a safe neighbour room with sources) or null if there is none
-    //the choice is saved in the room memory and checked again every REMOTE_CHECK_INTERVAL ticks
+    //the choice is saved in the room memory and checked again every config.REMOTE_CHECK_INTERVAL ticks
     getRemoteRoom: function(room) {
 
         //checked recently: return the saved result (it can be null, that means there was no room)
-        if(room.memory.remoteCheck && Game.time - room.memory.remoteCheck < REMOTE_CHECK_INTERVAL) {
+        if(room.memory.remoteCheck && Game.time - room.memory.remoteCheck < config.REMOTE_CHECK_INTERVAL) {
             return room.memory.remoteRoom;
         }
 

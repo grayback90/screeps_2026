@@ -7,8 +7,7 @@
 *
 **********************************************/
 
-var MAX_SCOUT_RANGE = 2; //how many rooms the scout goes away from the home room
-var SCOUT_STALE = 10000; //after how many ticks a room is visited again
+var config = require('config');
 
 //returns the names of all rooms around the home room up to the given range
 function getRoomsInRange(home, range) {
@@ -98,7 +97,7 @@ var intel = {
     //returns the name of the next room for the scout (never seen rooms first, then old ones), or null if there is nothing to scout
     getScoutTarget: function(creep) {
         //all rooms around the home room
-        var rooms = getRoomsInRange(creep.memory.home, MAX_SCOUT_RANGE);
+        var rooms = getRoomsInRange(creep.memory.home, config.MAX_SCOUT_RANGE);
 
         var unvisited = [];
         var stale = [];
@@ -115,7 +114,7 @@ var intel = {
             if(!data) {
                 //we have never been there
                 unvisited.push(name);
-            } else if(Game.time - data.time > SCOUT_STALE) {
+            } else if(Game.time - data.time > config.SCOUT_STALE) {
                 //the data is too old
                 stale.push(name);
             }
@@ -162,7 +161,7 @@ var intel = {
             }
 
             //skip rooms with old data (the situation could have changed) or data without the keeper-lairs info
-            if(Game.time - data.time > SCOUT_STALE || data.keeperLairs === undefined) {
+            if(Game.time - data.time > config.SCOUT_STALE || data.keeperLairs === undefined) {
                 continue;
             }
 
