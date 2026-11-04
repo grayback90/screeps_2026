@@ -7,6 +7,8 @@
 **********************************************/
 
 var intel = require('intel');
+var remote = require('remote');
+var config = require('config');
 
 //constants
 var LOG_INTERVAL = 20; //log interval in ticks
@@ -18,7 +20,7 @@ var UPGRADER_STOCK_STEP = 1000; //for this much energy in the containers one mor
 var MAX_UPGRADERS = 5; //maximum number of upgraders
 var SITES_PER_BUILDER = 2; //every amount of this variable one builder is spawned
 var MAX_BUILDERS = 3; //maximum of builders in the room
-var TOWER_FEEDER_UNDER_ATTACK = 3; //how many tower feeder in an attack phase
+var TOWER_FEEDER_UNDER_ATTACK = 1; //how many tower feeder in an attack phase
 
 //body patterns for creeps (gets repeated as often as energy allows)
 var bodyPatterns = {
@@ -64,9 +66,9 @@ function wallRepairersNeeded(room) {
     }
 }
 
-//helper function to decide the minimum on wallrepairers needed
+//helper function to decide the minimum on towerfeeder needed
 function towerFeederNeeded(room) {
-    //if there are enemys the min is "REPAIRS_UNDER_ATTACK"
+    //if there are enemys the min is "TOWER_FEEDER_UNDER_ATTACK"
     if (room.memory.hostileCount > 0) {
         return TOWER_FEEDER_UNDER_ATTACK;
     } else {
@@ -185,6 +187,16 @@ function buildersNeeded(room) {
     return Math.min(Math.ceil((constructionSitesCount / SITES_PER_BUILDER)), MAX_BUILDERS);
 }
 
+//returns how many sources are in the remote room
+function remoteMinersNeeded(room) {
+    //check if remote harvesting is enabled
+    if(config.REMOTE_HARVESTING_ENABLED) {
+        return remote.getRemoteSources(room).length;
+    } else {
+        return 0;
+    }
+}
+
 //spawn queue
 //priority of the roles (lower number = higher priority)
 var creepRoles = {
@@ -200,7 +212,7 @@ var creepRoles = {
     wallRepairer: { min: wallRepairersNeeded, pattern: [WORK, CARRY, MOVE], maxRepeats: 3, priority: 6, condition: wallOrRampartInTheRoom },
     builder: { min: buildersNeeded, pattern: [WORK, CARRY, MOVE], maxRepeats: 3, priority: 7 },
     upgrader: { min: upgradersNeeded, pattern: [WORK, CARRY, MOVE], maxRepeats: 3, priority: 8 },
-    remoteMiner: {min: 1, pattern: [WORK, WORK, MOVE, MOVE], maxRepeats: 3, priority: 9}
+    remoteMiner: {min: remoteMinersNeeded, pattern: [WORK, MOVE], maxRepeats: 3, priority: 9}
 };
 
 //builds a body: repeats the pattern as often as energy and maxRepeats allow
