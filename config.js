@@ -9,7 +9,9 @@
 
 var config = {
     /* gameplay-switches */
-    REMOTE_HARVESTING_ENABLED: true,
+    REMOTE_HARVESTING_ENABLED: true, //if true then remote miner and hauler are spawned if there are sources in free rooms
+    DEBUG_PATHS: false, //disable/enable the visualisation of the path (false uses less CPU)
+    SAFE_MODE_ENABLED: false, //false = no safe mode, just a log message / true = safe mode will be activated if needed
     
     /* roles */
     MAX_UPGRADERS: 5, //maximum number of upgraders
@@ -18,7 +20,6 @@ var config = {
 
     /* creep movement */
     REUSE_PATH: 20, //creep calculates new path in this amount of ticks (standard is 5)
-    DEBUG_PATHS: false, //disable/enable the visualisation of the path (false uses less CPU)
 
     /* energy and scaling */
     PICKUP_MIN_ENERGY: 50, //energy in the floor below this cap will not be collected
@@ -51,7 +52,6 @@ var config = {
 
     /* defense */
     SAFE_MODE_SPAWN_HITS: 0.6, //under x (0,6 = 60%) of the spawn hitpoints there is an alarm
-    SAFE_MODE_ENABLED: false, //false = no safe mode, just a log message / true = safe mode will be activated if needed
 
     /* logging */
     LOG_INTERVAL: 20, //log interval in ticks
