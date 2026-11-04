@@ -314,7 +314,7 @@ function getFetchTarget(creep) {
     //try to get the container that is saved in the creep's memory
     var container = Game.getObjectById(creep.memory.fetchTargetId);
     //the container still has enough energy, use it
-    if(container && container.store[RESOURCE_ENERGY] >= config.FETCH_MIN_ENERGY) {
+    if(container && container.store[RESOURCE_ENERGY] >= config.CONTAINER_SURPLUS) {
         return container;
     }
  
