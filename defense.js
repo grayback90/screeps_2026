@@ -72,14 +72,14 @@ var defense = {
             }
             room.memory.threat = threat;
 
-            //safeMode
-            checkSafeMode(room);
-
             //read the old count before we overwrite it
             var oldCount = room.memory.hostileCount || 0;
 
             //save the new count in the room memory
             room.memory.hostileCount = hostiles.length;
+
+            //safeMode
+            checkSafeMode(room);
 
             //log only when the situation changes
             if(oldCount == 0 && hostiles.length > 0) {

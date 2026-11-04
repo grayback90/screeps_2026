@@ -702,8 +702,8 @@ var tasks = {
 
         //data of the current room
         var data = creep.room.memory.scout;
-        //if there is no data or data is older than 100 ticks
-        if(!data || (Game.time - data.time > 100)) {
+        //if there is no data or data is older than config.REMOTE_CHECK_INTERVAL ticks
+        if(!data || (Game.time - data.time > config.REMOTE_CHECK_INTERVAL)) {
             intel.recordRoom(creep.room);
         }
 
@@ -733,6 +733,12 @@ var tasks = {
         //home room as object
         var home = Game.rooms[creep.memory.home];
 
+        //just to secure there is a home
+        if(!home) {
+            creep.say('No Home');
+            return;
+        }
+
         //remote room
         var remoteRoom = remote.getRemoteRoom(home);
         if(!remoteRoom) {
@@ -756,6 +762,13 @@ var tasks = {
 
         //mining
         var source = Game.getObjectById(remoteSource.id);
+        //if the id is not resolvable delete the memory and try later again
+        if(!source) {
+            delete creep.memory.remoteSourceId;
+            creep.say('No Source');
+            return;
+        }
+
         var result = creep.harvest(source);
 
         //mining, walking or waiting
