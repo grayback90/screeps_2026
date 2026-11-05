@@ -9,7 +9,7 @@
 
 var config = {
     /* gameplay-switches */
-    REMOTE_HARVESTING_ENABLED: true, //if true then remote miner and hauler are spawned if there are sources in free rooms
+    REMOTE_HARVESTING_ENABLED: false, //if true then remote miner and hauler are spawned if there are sources in free rooms
     DEBUG_PATHS: false, //disable/enable the visualisation of the path (false uses less CPU)
     SAFE_MODE_ENABLED: false, //false = no safe mode, just a log message / true = safe mode will be activated if needed
     
@@ -49,6 +49,7 @@ var config = {
     MAX_SCOUT_RANGE: 2, //how many rooms the scout goes away from the home room
     SCOUT_STALE: 10000, //after how many ticks a room is visited again
     REMOTE_CHECK_INTERVAL: 100, //the remote room is checked again every x ticks
+    SCOUT_RECORD_INTERVAL: 100, //the scout records the room it stands in again after this many ticks
 
     /* defense */
     SAFE_MODE_SPAWN_HITS: 0.6, //under x (0,6 = 60%) of the spawn hitpoints there is an alarm

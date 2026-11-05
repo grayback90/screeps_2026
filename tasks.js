@@ -328,7 +328,7 @@ function getFetchTarget(creep) {
     //try to get the container that is saved in the creep's memory
     var container = Game.getObjectById(creep.memory.fetchTargetId);
     //the container still has enough energy, use it
-    if(container && container.store[RESOURCE_ENERGY] >= config.CONTAINER_SURPLUS) {
+    if(container && container.store[RESOURCE_ENERGY] >= config.FETCH_MIN_ENERGY) {
         return container;
     }
  
@@ -716,8 +716,8 @@ var tasks = {
 
         //data of the current room
         var data = creep.room.memory.scout;
-        //if there is no data or data is older than config.REMOTE_CHECK_INTERVAL ticks
-        if(!data || (Game.time - data.time > config.REMOTE_CHECK_INTERVAL)) {
+        //if there is no data or data is older than config.SCOUT_RECORD_INTERVAL ticks
+        if(!data || (Game.time - data.time > config.SCOUT_RECORD_INTERVAL)) {
             intel.recordRoom(creep.room);
         }
 
