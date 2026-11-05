@@ -449,6 +449,116 @@ function getRemoteSourceEntry(creep, home) {
     return null;
 }
 
+//return the best position for a remote container or null if there is none
+function getRemoteContainerPosition(source, homeName) {
+    //get the room
+    var room = source.room;
+
+    //search for the exit to the home room
+    var exitDirection = room.findExitTo(homeName);
+    if(exitDirection < 0) {
+        return null;
+    }
+
+    //all fields of the exit
+    var exitTiles = room.find(exitDirection);
+    if(exitTiles.length = 0) {
+        return null;
+    }
+
+    //field that is the nearest to the source
+    var exitPos = source.pos.findClosestByRange(exitTiles);
+    //get the terrain
+    var terrain = room.getTerrain();
+
+    //find the best field
+    var best = null;
+    var bestDistance = Infinity;
+
+    //check the eight tiles around the source
+    for(var dx = -1; dx <= 1; dx++) {
+        for(var dy = -1; dy <= 1; dy++) {
+
+            //this is the source itself
+            if(dx == 0 && dy == 0) {
+                continue;
+            }
+
+            var x = source.pos.x + dx;
+            var y = source.pos.y + dy;
+
+            //no walls
+            if(terrain.get(x, y) == TERRAIN_MASK_WALL) {
+                continue;
+            }
+
+            //skip tiles where something is already built or planned
+            if(room.lookForAt(LOOK_STRUCTURES, x, y).length > 0 || room.lookForAt(LOOK_CONSTRUCTION_SITES, x, y).length > 0) {
+                continue;
+            }
+
+            //closer to the spawn than the best tile so far -> new best
+            var distance = exitPos.getRangeTo(x, y);
+            if(distance < bestDistance) {
+                best = {x: x, y: y};
+                bestDistance = distance;
+            }
+        }
+    }
+
+    return best;
+}
+
+//set the construction site for a remote container if there is none
+function manageRemoteContainer(creep, source) {
+    var room = creep.room;
+
+    //search for containers next to the source
+    var containers = source.pos.findInRange(FIND_STRUCTURES, 1, {
+        filter: (structure) => {
+            return structure.structureType == STRUCTURE_CONTAINER;
+        }
+    });
+
+    //search for container construction sites next to the source
+    var sites = source.pos.findInRange(FIND_CONSTRUCTION_SITES, 1, {
+        filter: (site) => {
+            return site.structureType == STRUCTURE_CONTAINER;
+        }
+    });
+
+    //create a container construction site if neither exists
+    if(containers.length == 0 && sites.length == 0) {
+        var pos = getRemoteContainerPosition(source, creep.memory.home);
+
+        if(pos) {
+            var result = room.createConstructionSite(
+                pos.x,
+                pos.y,
+                STRUCTURE_CONTAINER
+            );
+
+            if(result == OK) {
+                console.log('[Remote] Container construction site created at ' +
+                    pos.x + ',' + pos.y + ' in ' + room.name);
+            } else {
+                console.log('[Remote] Failed to create container construction site: ' +
+                    result + ' in ' + room.name);
+            }
+        }
+    }
+
+    //count all containers in the room
+    room.memory.remoteContainers = room.find(FIND_STRUCTURES, {
+        filter: (structure) => {
+            return structure.structureType == STRUCTURE_CONTAINER;
+        }
+    }).length;
+
+    //count all owned construction sites in the room
+    room.memory.remoteSites = room.find(FIND_MY_CONSTRUCTION_SITES).length;
+}
+
 var tasks = {
     //switches between the fetch task and the work task of a role (empty -> fetch, full -> work)
     //fetchTask is optional, the default is harvest
@@ -781,6 +891,11 @@ var tasks = {
             delete creep.memory.remoteSourceId;
             creep.say('No Source');
             return;
+        }
+
+        //build container construction site if there is none
+        if(Game.time % config.REMOTE_SITE_INTERVAL == 0) {
+            manageRemoteContainer(creep, source);
         }
 
         var result = creep.harvest(source);

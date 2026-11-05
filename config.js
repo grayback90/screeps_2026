@@ -34,6 +34,7 @@ var config = {
     EXTENSION_SEARCH_RANGES: [6, 8, 10], //how far from the spawn the extensions are placed (in tiles), the next range is used if there are not enough free tiles
     CONSTRUCTION_INTERVAL: 50, //the manager checks every x ticks if something has to be built
     MAX_CONSTRUCTION_SITES: 5, //max number of construction sites in a room at the same time
+    REMOTE_SITE_INTERVAL: 10, //the remote miner checks every x ticks if the container site is needed and counts the construction sites
 
     /* defending */
     DEFENDER_MARGIN: 1.5, //how much stronger than the enemy the creeps will be

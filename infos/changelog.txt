@@ -1,6 +1,10 @@
 xx.yy.2026
 - 
 
+05.11.2026
+- little fixes
+- remote-miner sets the container construction site
+
 04.11.2026
 - config-file
 - remote-miner spawn logic
