@@ -462,7 +462,7 @@ function getRemoteContainerPosition(source, homeName) {
 
     //all fields of the exit
     var exitTiles = room.find(exitDirection);
-    if(exitTiles.length = 0) {
+    if(exitTiles.length == 0) {
         return null;
     }
 

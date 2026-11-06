@@ -22,6 +22,16 @@ var defense = require('defense');
 var towerManager = require('tower.manager');
 var constructionManager = require('construction.manager');
 
+//helper function that one error doesnt stop the whole code
+function safeRun(name, fn) {
+    try {
+        return fn();
+    } catch(error) {
+        console.log(name);
+        error.stack;
+    }
+}
+
 module.exports.loop = function () {
 
     //clear memory of dead creeps
@@ -32,21 +42,26 @@ module.exports.loop = function () {
     }
 
     //run defense logic
-    defense.run();
+    safeRun('defense', function() { defense.run(); });
 
     //run tower manager
-    towerManager.run();
+    safeRun('towerManager', function() { towerManager.run(); });
 
     //run construction logic
-    constructionManager.run();
+    safeRun('constructionManager', function() { constructionManager.run(); });
 
     //run spawn manager
-    spawnManager.run();
+    safeRun('spawnManager', function() { spawnManager.run(); });
 
     for(var name in Game.creeps) {
         var creep = Game.creeps[name];
         if(creep.memory.role == 'harvester') {
-            roleHarvester.run(creep);
+            try {
+                roleHarvester.run(creep);
+            } catch(error) {
+                console.log(name);
+                error.stack;
+            }
         }
         if(creep.memory.role == 'upgrader') {
             roleUpgrader.run(creep);

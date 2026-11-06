@@ -42,6 +42,16 @@ function getRoomsInRange(home, range) {
     return Object.keys(found);
 }
 
+//returns true if the room can not be entered
+//if the server has no status data for the room, it counts as open
+function isRoomClosed(name) {
+    try {
+        return Game.map.getRoomStatus(name).status == 'closed';
+    } catch(error) {
+        return false;
+    }
+}
+
 var intel = {
 
     //records the rooms and saves it to the scouts memory
@@ -105,7 +115,7 @@ var intel = {
             var name = rooms[i];
 
             //skip rooms that can not be entered
-            if(Game.map.getRoomStatus(name).status == 'closed') {
+            if(isRoomClosed(name)) {
                 continue;
             }
 
@@ -150,7 +160,7 @@ var intel = {
             var name = exits[direction];
 
             //skip rooms that can not be entered
-            if(Game.map.getRoomStatus(name).status == 'closed') {
+            if(isRoomClosed(name)) {
                 continue;
             }
 
