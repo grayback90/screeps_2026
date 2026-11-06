@@ -22,13 +22,16 @@ var defense = require('defense');
 var towerManager = require('tower.manager');
 var constructionManager = require('construction.manager');
 
+//table for all roles
+var roles = {harvester: roleHarvester, upgrader: roleUpgrader, builder: roleBuilder, towerFeeder: roleTowerFeeder, wallRepairer: roleWallRepairer,
+            defender: roleDefender, miner: roleMiner, hauler: roleHauler, scout: roleScout, remoteMiner: roleRemoteMiner}
+
 //helper function that one error doesnt stop the whole code
 function safeRun(name, fn) {
     try {
         return fn();
     } catch(error) {
-        console.log(name);
-        error.stack;
+        console.log('ERROR in ' + name + ': ' + error.stack);
     }
 }
 
@@ -55,40 +58,14 @@ module.exports.loop = function () {
 
     for(var name in Game.creeps) {
         var creep = Game.creeps[name];
-        if(creep.memory.role == 'harvester') {
+        var role = roles[creep.memory.role];
+
+        if(role) {
             try {
-                roleHarvester.run(creep);
+                role.run(creep);
             } catch(error) {
-                console.log(name);
-                error.stack;
+                console.log('Error in creep ' + name + ': ' + error.stack);
             }
-        }
-        if(creep.memory.role == 'upgrader') {
-            roleUpgrader.run(creep);
-        }
-        if(creep.memory.role == 'builder') {
-            roleBuilder.run(creep);
-        }
-        if(creep.memory.role == 'towerFeeder') {
-            roleTowerFeeder.run(creep);
-        }
-        if(creep.memory.role == 'wallRepairer') {
-            roleWallRepairer.run(creep);
-        }
-        if(creep.memory.role == 'defender') {
-            roleDefender.run(creep);
-        }
-        if(creep.memory.role == 'miner') {
-            roleMiner.run(creep);
-        }
-        if(creep.memory.role == 'hauler') {
-            roleHauler.run(creep);
-        }
-        if(creep.memory.role == 'scout') {
-            roleScout.run(creep);
-        }
-        if(creep.memory.role == 'remoteMiner') {
-            roleRemoteMiner.run(creep);
         }
     }
 }
