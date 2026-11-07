@@ -27,8 +27,10 @@ var roles = {harvester: roleHarvester, upgrader: roleUpgrader, builder: roleBuil
             defender: roleDefender, miner: roleMiner, hauler: roleHauler, scout: roleScout, remoteMiner: roleRemoteMiner}
 
 //table for all managers
-var managers = {name: 'defense', module: defense, name: 'towerManager', module: towerManager, name: 'constructionManager', module: constructionManager,
-                name: 'spawnManager', module: spawnManager}
+var managers = [{name: 'defense', module: defense},
+                {name: 'towerManager', module: towerManager},
+                {name: 'constructionManager', module: constructionManager,},
+                {name: 'spawnManager', module: spawnManager}]
 
 //helper function that one error doesnt stop the whole code
 function safeRun(name, fn) {
