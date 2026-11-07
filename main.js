@@ -26,6 +26,10 @@ var constructionManager = require('construction.manager');
 var roles = {harvester: roleHarvester, upgrader: roleUpgrader, builder: roleBuilder, towerFeeder: roleTowerFeeder, wallRepairer: roleWallRepairer,
             defender: roleDefender, miner: roleMiner, hauler: roleHauler, scout: roleScout, remoteMiner: roleRemoteMiner}
 
+//table for all managers
+var managers = {name: 'defense', module: defense, name: 'towerManager', module: towerManager, name: 'constructionManager', module: constructionManager,
+                name: 'spawnManager', module: spawnManager}
+
 //helper function that one error doesnt stop the whole code
 function safeRun(name, fn) {
     try {
@@ -44,17 +48,9 @@ module.exports.loop = function () {
         }
     }
 
-    //run defense logic
-    safeRun('defense', function() { defense.run(); });
-
-    //run tower manager
-    safeRun('towerManager', function() { towerManager.run(); });
-
-    //run construction logic
-    safeRun('constructionManager', function() { constructionManager.run(); });
-
-    //run spawn manager
-    safeRun('spawnManager', function() { spawnManager.run(); });
+    for(var i = 0; i < managers.length; i++) {
+        safeRun(managers[i].name, function() {managers[i].run(); });
+    }
 
     for(var name in Game.creeps) {
         var creep = Game.creeps[name];
