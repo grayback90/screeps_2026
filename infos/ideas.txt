@@ -20,12 +20,91 @@ Army roles that need to be implemented:
 
 Next Steps:
 ----
-1. streets on solid ground, then on the most used path (filter 17)
-2. remoteHarvester (filter 4)
-    2b. Der Remote-Miner. Er läuft in den Nachbarraum und erntet dort. Zunächst ohne Container: Er erntet und legt die Energie auf den Boden. Das reicht, um den Ablauf zu testen.
-    2c. Der Container im Remote-Raum. Ein Builder baut ihn, und der Miner steht darauf.
-    2d. Der Remote-Hauler. Er holt die Energie im Nachbarraum ab und bringt sie zum Heimatraum.
-    2e. Der Rückzug bei Feinden. Die Remote-Creeps verlassen den Raum, wenn Feinde auftauchen.
-    2f. Der Spawn-Manager. Die Zahl der Remote-Miner und -Hauler hängt von der Zahl der geeigneten Remote-Räume ab.
-3. defenseSquad for remote rooms
-4. claimer and reserving
+1. Remote Builder
+    Remote Construction Sites abarbeiten und anschließend Home-Room-Aufgaben übernehmen.
+2. Remote Miner und Hauler
+    Remote Energie zuverlässig ernten, lagern und transportieren.
+3. Threat Detection und Rückzug
+    Remote-Räume bei Gefahr sperren und nach Scout-Entwarnung wieder freigeben.
+4. Traffic Tracking und dynamische Straßen
+    Tatsächliche Laufwege erfassen und daraus Straßen ableiten.
+5. Straßen zu Ramparts
+    Schnelle Verteidigungswege vom Spawn zu den Ramparts.
+6. Automatisches Wall Placement
+    Verteidigungslinien automatisch  planen und bauen.
+7. Remote Defense
+    Squads zum Schutz deiner Außenposten.
+8. Home Patrol Squad
+    Aktive Sicherung der umliegenden Räume.
+
+
+zu 1.
+Sein Verhalten könnte so aussehen:
+1. Im Home Room prüfen, ob im Remote Room Construction Sites vorhanden sind.
+2. Falls ja, zum Remote Room reisen.
+3. Construction Sites bauen, bis keine mehr vorhanden sind.
+4. Zurück in den Home Room reisen.
+5. Dort wieder als normaler Builder arbeiten.
+6. Wenn keine Bauaufträge vorhanden sind, als Upgrader arbeiten.
+
+zu 2.
+Remote Miner
+- Reist zur Remote Source.
+- Erntet Energie.
+- Lagert diese im Remote Container ein.
+Remote Hauler
+- Prüft den Container auf verfügbare Energie.
+- Nimmt Energie auf.
+- Transportiert sie zurück in den Home Room.
+- Liefert sie dort an die vorgesehenen Strukturen oder Lagerplätze.
+
+zu 3.
+SAFE
+Raum ist sicher
+Miner und Hauler arbeiten normal.
+
+THREAT DETECTED
+Gefahr erkannt
+Alle Remote-Creeps brechen ihre aktuelle Aufgabe ab und kehren zurück.
+
+UNSAFE
+Raum bleibt gesperrt
+Keine neuen Remote-Einsätze. Scout überprüft den Raum.
+
+SAFE AGAIN
+Entwarnung durch Scout
+Remote-Creeps dürfen ihre Arbeit wieder aufnehmen.
+
+zu 4.
+Phase A – Traffic erfassen
+- Positionen von Creeps pro Tick erfassen.
+- Häufigkeit pro Raumposition erhöhen.
+- Optional unterschiedliche Gewichtung für bestimmte Rollen.
+- Alte Daten langsam abbauen lassen.
+Phase B – Straßen bauen
+- Traffic-Daten auswerten.
+- Positionen mit ausreichend hoher Nutzung identifizieren.
+- Prüfen, ob dort eine Straße sinnvoll gebaut werden kann.
+- Bestehende Straßen und Hindernisse berücksichtigen.
+- Construction Sites nur bei ausreichend hoher Priorität erstellen.
+
+zu 5.
+Die Logik ist relativ einfach:
+- Alle eigenen Ramparts im Home Room ermitteln.
+- Vom Spawn aus Wege zu diesen Ramparts planen.
+- Bestehende Straßen berücksichtigen.
+- Fehlende Straßen als Construction Sites platzieren.
+
+zu 6.
+Hier würde ich zunächst die Positionen definieren, die geschützt werden müssen:
+- Spawn
+- Controller
+- Sources
+- wichtige Gebäude und Lager
+- strategisch wichtige Zugänge
+
+zu 7. & 8.
+Zuerst ein Verteidigungssquad für Remote Rooms, in denen deine Miner und Hauler arbeiten. Später ein kleiner eigener Squad, der die Umgebung deines Home Rooms absichert.
+Hier würde ich aber zwischen zwei Aufgaben unterscheiden:
+- Remote Defense: Schutz deiner wirtschaftlich wichtigen Außenposten.
+- Home Defense / Patrol: Aktive Suche nach Gegnern und Bekämpfung in angrenzenden Räumen.

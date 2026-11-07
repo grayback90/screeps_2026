@@ -3,7 +3,7 @@ xx.yy.2026
 
 07.11.2026
 - little fix for calling the manager in main
-- 
+- mapping out the next steps (german)
 
 06.11.2026
 - playtest and fixes
