@@ -51,7 +51,7 @@ module.exports.loop = function () {
     }
 
     for(var i = 0; i < managers.length; i++) {
-        safeRun(managers[i].name, function() {managers[i].run(); });
+        safeRun(managers[i].name, function() {managers[i].module.run(); });
     }
 
     for(var name in Game.creeps) {
