@@ -24,13 +24,13 @@ var constructionManager = require('construction.manager');
 
 //table for all roles
 var roles = {harvester: roleHarvester, upgrader: roleUpgrader, builder: roleBuilder, towerFeeder: roleTowerFeeder, wallRepairer: roleWallRepairer,
-            defender: roleDefender, miner: roleMiner, hauler: roleHauler, scout: roleScout, remoteMiner: roleRemoteMiner}
+            defender: roleDefender, miner: roleMiner, hauler: roleHauler, scout: roleScout, remoteMiner: roleRemoteMiner};
 
 //table for all managers
 var managers = [{name: 'defense', module: defense},
                 {name: 'towerManager', module: towerManager},
-                {name: 'constructionManager', module: constructionManager,},
-                {name: 'spawnManager', module: spawnManager}]
+                {name: 'constructionManager', module: constructionManager},
+                {name: 'spawnManager', module: spawnManager}];
 
 //helper function that one error doesnt stop the whole code
 function safeRun(name, fn) {
