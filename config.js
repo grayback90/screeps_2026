@@ -10,6 +10,9 @@
 var config = {
     /* gameplay-switches */
     REMOTE_HARVESTING_ENABLED: false, //if true then remote miner and hauler are spawned if there are sources in free rooms
+    REMOTE_HARVESTING_MIN_RCL: 4, //remote miners and haulers are only spawned from this controller level of the home room
+    REMOTE_BUILDING_ACTIVE: true, //remote builders may be spawned
+    REMOTE_BUILDING_MIN_RCL: 4, //remote builders are only spawned from this controller level of the home room
     DEBUG_PATHS: false, //disable/enable the visualisation of the path (false uses less CPU)
     SAFE_MODE_ENABLED: false, //false = no safe mode, just a log message / true = safe mode will be activated if needed
     
