@@ -945,16 +945,18 @@ var tasks = {
             creep.say('Waiting');
         }
     },
+    //remote builder: builds the construction sites of the remote room that getRemoteBuildRoom chooses
+    //the creep stays in the remote room until all sites are built, then it works in the home room (builder or upgrader)
     remoteBuild: function(creep) {
         //check if the home room is in the memory
         if(!creep.memory.home) {
             creep.memory.home = creep.room.name;
         }
-        
+
         //get the home room
         var home = Game.rooms[creep.memory.home];
 
-        //choose target if creep is in home room
+        //choose the target only if the creep is in the home room
         if(creep.room.name == creep.memory.home) {
             creep.memory.remoteTarget = getRemoteBuildRoom(home);
         }
@@ -962,40 +964,46 @@ var tasks = {
         var target = creep.memory.remoteTarget;
 
         //there is a target
-        //if the creep is not in the target room
-        if(creep.room.name != target) {
-            creep.say('To Remote');
-            moveToTarget(creep, new RoomPosition(25, 25, target), {range: 20});
-            return;
-        }
-
-        //count construction sites (if there are 0 delete the remoteTarget)
-        creep.room.memory.remoteSites = creep.room.find(FIND_MY_CONSTRUCTION_SITES).length;
-        if(creep.room.memory.remoteSites == 0) {
-            creep.memory.remoteTarget = null;
-            return;
-        } else {
-            tasks.switchTask(creep, 'build', 'gather');
-            if(creep.memory.task = 'build') {
-                tasks.build(creep);
-            } else {
-                task.gather(creep);
+        if(target) {
+            //the creep is not in the target room: travel there
+            if(creep.room.name != target) {
+                creep.say('To Remote');
+                moveToTarget(creep, new RoomPosition(25, 25, target), {range: 20});
                 return;
             }
-        }
 
-        //there is no target
-        if(creep.room.name != home) {
-            creep.say('To Home');
-            moveToTarget(creep, new RoomPosition(25, 25, creep.memory.home), {range: 20});
-            return;
-        } else {
+            //count the construction sites, if there are none the job is done and the creep goes home
+            creep.room.memory.remoteSites = creep.room.find(FIND_MY_CONSTRUCTION_SITES).length;
+            if(creep.room.memory.remoteSites == 0) {
+                creep.memory.remoteTarget = null;
+                return;
+            }
+
+            //build, or gather energy in this room (never from the home room)
             tasks.switchTask(creep, 'build', 'gather');
-            if(!tasks.build(creep)) {
-                tasks.upgrade(creep);
+            if(creep.memory.task == 'build') {
+                tasks.build(creep);
             } else {
                 tasks.gather(creep);
             }
+            return;
+        }
+
+        //there is no target: the creep is not at home, so it travels home
+        if(creep.room.name != creep.memory.home) {
+            creep.say('To Home');
+            moveToTarget(creep, new RoomPosition(25, 25, creep.memory.home), {range: 20});
+            return;
+        }
+
+        //there is no target and the creep is at home: work as a builder, upgrade if there is nothing to build
+        tasks.switchTask(creep, 'build', 'gather');
+        if(creep.memory.task == 'build') {
+            if(!tasks.build(creep)) {
+                tasks.upgrade(creep);
+            }
+        } else {
+            tasks.gather(creep);
         }
     }
 };
