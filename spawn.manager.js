@@ -185,6 +185,11 @@ function remoteMinersNeeded(room) {
     }
 }
 
+//returns how many remoteBuilder are needed
+function remoteBuildersNeeded(room) {
+    return 1;
+}
+
 //spawn queue
 //priority of the roles (lower number = higher priority)
 var creepRoles = {
@@ -200,7 +205,9 @@ var creepRoles = {
     wallRepairer: { min: wallRepairersNeeded, pattern: [WORK, CARRY, MOVE], maxRepeats: 3, priority: 6, condition: wallOrRampartInTheRoom },
     builder: { min: buildersNeeded, pattern: [WORK, CARRY, MOVE], maxRepeats: 3, priority: 7 },
     upgrader: { min: upgradersNeeded, pattern: [WORK, CARRY, MOVE], maxRepeats: 3, priority: 8 },
-    remoteMiner: {min: remoteMinersNeeded, pattern: [WORK, MOVE], maxRepeats: 3, priority: 9}
+    remoteBuilder: {min: remoteBuildersNeeded, pattern: [WORK, CARRY, MOVE], maxRepeats: 3, priority: 9},
+    remoteMiner: {min: remoteMinersNeeded, pattern: [WORK, MOVE], maxRepeats: 3, priority: 10}
+    
 };
 
 //builds a body: repeats the pattern as often as energy and maxRepeats allow

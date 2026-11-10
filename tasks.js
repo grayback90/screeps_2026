@@ -944,6 +944,59 @@ var tasks = {
         } else {
             creep.say('Waiting');
         }
+    },
+    remoteBuild: function(creep) {
+        //check if the home room is in the memory
+        if(!creep.memory.home) {
+            creep.memory.home = creep.room.name;
+        }
+        
+        //get the home room
+        var home = Game.rooms[creep.memory.home];
+
+        //choose target if creep is in home room
+        if(creep.room.name == creep.memory.home) {
+            creep.memory.remoteTarget = getRemoteBuildRoom(home);
+        }
+
+        var target = creep.memory.remoteTarget;
+
+        //there is a target
+        //if the creep is not in the target room
+        if(creep.room.name != target) {
+            creep.say('To Remote');
+            moveToTarget(creep, new RoomPosition(25, 25, target), {range: 20});
+            return;
+        }
+
+        //count construction sites (if there are 0 delete the remoteTarget)
+        creep.room.memory.remoteSites = creep.room.find(FIND_MY_CONSTRUCTION_SITES).length;
+        if(creep.room.memory.remoteSites == 0) {
+            creep.memory.remoteTarget = null;
+            return;
+        } else {
+            tasks.switchTask(creep, 'build', 'gather');
+            if(creep.memory.task = 'build') {
+                tasks.build(creep);
+            } else {
+                task.gather(creep);
+                return;
+            }
+        }
+
+        //there is no target
+        if(creep.room.name != home) {
+            creep.say('To Home');
+            moveToTarget(creep, new RoomPosition(25, 25, creep.memory.home), {range: 20});
+            return;
+        } else {
+            tasks.switchTask(creep, 'build', 'gather');
+            if(!tasks.build(creep)) {
+                tasks.upgrade(creep);
+            } else {
+                tasks.gather(creep);
+            }
+        }
     }
 };
 

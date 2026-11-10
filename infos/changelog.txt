@@ -1,7 +1,10 @@
 xx.yy.2026
 - 
 
-09.08.2026
+10.11.2026
+- task "remoteBuild" and spawning of the remoteBuilder
+
+09.11.2026
 - get the remote build room
 
 07.11.2026
