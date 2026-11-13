@@ -187,7 +187,11 @@ function remoteMinersNeeded(room) {
 
 //returns how many remoteBuilder are needed
 function remoteBuildersNeeded(room) {
-    return 1;
+    if(config.REMOTE_BUILDING_ACTIVE && (room.controller.level == config.REMOTE_BUILDING_MIN_RCL)) {
+        return 1
+    } else {
+        return 0;
+    }
 }
 
 //spawn queue
