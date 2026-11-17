@@ -2,7 +2,7 @@ xx.yy.2026
 - 
 
 13.11.2026 & 17.11.2026
-- logic how many remote builder are spawned
+- logic how many remote builder/miner are spawned
 
 10.11.2026
 - task "remoteBuild" and spawning of the remoteBuilder

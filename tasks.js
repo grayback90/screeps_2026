@@ -923,7 +923,7 @@ var tasks = {
 
         //choose the target only if the creep is in the home room
         if(creep.room.name == creep.memory.home) {
-            creep.memory.remoteTarget = remote.getRemoteBuildRoom(home)(home);
+            creep.memory.remoteTarget = remote.getRemoteBuildRoom(home);
         }
 
         var target = creep.memory.remoteTarget;

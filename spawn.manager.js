@@ -207,7 +207,7 @@ function remoteMinersNeeded(room) {
     if(!remoteHarvestingAllowed(room)) {
         return 0;
     } else {
-        return remote.getRemoteSources(room).length0;
+        return remote.getRemoteSources(room).length;
     }
 }
 
