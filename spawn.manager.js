@@ -175,20 +175,48 @@ function buildersNeeded(room) {
     return Math.min(Math.ceil((constructionSitesCount / config.SITES_PER_BUILDER)), config.MAX_BUILDERS);
 }
 
+//checks if remote harvesting is allowed
+function remoteHarvestingAllowed(room) {
+    //check the switch for remote harvesting
+    if(!config.REMOTE_HARVESTING_ENABLED) {
+        return false;
+    }
+    //check the room controller level
+    if(room.controller.level < config.REMOTE_HARVESTING_MIN_RCL) {
+        return false;
+    }
+    return true;
+}
+
+//checks if remote building is allowed
+function remoteBuildingAllowed(room) {
+    //check the switch for remote harvesting
+    if(!config.REMOTE_BUILDING_ENABLED) {
+        return false;
+    }
+    //check the room controller level
+    if(room.controller.level < config.REMOTE_BUILDING_MIN_RCL) {
+        return false;
+    }
+    return true;
+}
+
 //returns how many sources are in the remote room
 function remoteMinersNeeded(room) {
     //check if remote harvesting is enabled
-    if(config.REMOTE_HARVESTING_ENABLED) {
-        return remote.getRemoteSources(room).length;
-    } else {
+    if(!remoteHarvestingAllowed(room)) {
         return 0;
+    } else {
+        return remote.getRemoteSources(room).length0;
     }
 }
 
 //returns how many remoteBuilder are needed
 function remoteBuildersNeeded(room) {
-    if(config.REMOTE_BUILDING_ACTIVE && (room.controller.level == config.REMOTE_BUILDING_MIN_RCL)) {
-        return 1
+    if(!remoteBuildingAllowed(room)) {
+        return 0
+    } else if(remote.getRemoteBuildRoom(room) != null){
+        return 1;
     } else {
         return 0;
     }

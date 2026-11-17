@@ -559,41 +559,6 @@ function manageRemoteContainer(creep, source) {
     room.memory.remoteSites = room.find(FIND_MY_CONSTRUCTION_SITES).length;
 }
 
-//returns the name of the remote room with own construction sites that the remote builder should go to, or null if there is none
-//only the suitable neighbour rooms are checked (intel.getRemoteRooms), the remote room of the miners is not changed
-//the closest room wins, with the same distance the room with the most construction sites
-function getRemoteBuildRoom(home) {
-    //all suitable remote rooms (this does not change the remote room of the miners)
-    var candidates = intel.getRemoteRooms(home.name);
-
-    //best = best room so far, bestDistance starts very high, bestSites starts at 0
-    var best = null;
-    var bestDistance = Infinity;
-    var bestSites = 0;
-
-    for(var i = 0; i < candidates.length; i++) {
-        var name = candidates[i];
-
-        //number of construction sites that the remote creeps have saved in the room memory
-        var data = Memory.rooms && Memory.rooms[name];
-        var sites = (data && data.remoteSites) || 0;
-
-        //skip rooms without construction sites
-        if(sites == 0) {
-            continue;
-        }
-
-        //closer room, or the same distance and more construction sites -> new best
-        var distance = Game.map.getRoomLinearDistance(home.name, name);
-        if(distance < bestDistance || (distance == bestDistance && sites > bestSites)) {
-            best = name;
-            bestDistance = distance;
-            bestSites = sites;
-        }
-    }
-    return best;
-}
-
 var tasks = {
     //switches between the fetch task and the work task of a role (empty -> fetch, full -> work)
     //fetchTask is optional, the default is harvest
@@ -945,7 +910,7 @@ var tasks = {
             creep.say('Waiting');
         }
     },
-    //remote builder: builds the construction sites of the remote room that getRemoteBuildRoom chooses
+    //remote builder: builds the construction sites of the remote room that remote.getRemoteBuildRoom(home) chooses
     //the creep stays in the remote room until all sites are built, then it works in the home room (builder or upgrader)
     remoteBuild: function(creep) {
         //check if the home room is in the memory
@@ -958,7 +923,7 @@ var tasks = {
 
         //choose the target only if the creep is in the home room
         if(creep.room.name == creep.memory.home) {
-            creep.memory.remoteTarget = getRemoteBuildRoom(home);
+            creep.memory.remoteTarget = remote.getRemoteBuildRoom(home)(home);
         }
 
         var target = creep.memory.remoteTarget;

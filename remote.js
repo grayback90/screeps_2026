@@ -12,6 +12,41 @@ var config = require('config');
 
 var remote = {
 
+    //returns the name of the remote room with own construction sites that the remote builder should go to, or null if there is none
+    //only the suitable neighbour rooms are checked (intel.getRemoteRooms), the remote room of the miners is not changed
+    //the closest room wins, with the same distance the room with the most construction sites
+    getRemoteBuildRoom: function(home) {
+        //all suitable remote rooms (this does not change the remote room of the miners)
+        var candidates = intel.getRemoteRooms(home.name);
+
+        //best = best room so far, bestDistance starts very high, bestSites starts at 0
+        var best = null;
+        var bestDistance = Infinity;
+        var bestSites = 0;
+
+        for(var i = 0; i < candidates.length; i++) {
+            var name = candidates[i];
+
+            //number of construction sites that the remote creeps have saved in the room memory
+            var data = Memory.rooms && Memory.rooms[name];
+            var sites = (data && data.remoteSites) || 0;
+
+            //skip rooms without construction sites
+            if(sites == 0) {
+                continue;
+            }
+
+            //closer room, or the same distance and more construction sites -> new best
+            var distance = Game.map.getRoomLinearDistance(home.name, name);
+            if(distance < bestDistance || (distance == bestDistance && sites > bestSites)) {
+                best = name;
+                bestDistance = distance;
+                bestSites = sites;
+            }
+        }
+        return best;
+    },
+
     //returns the name of the remote room (a safe neighbour room with sources) or null if there is none
     //the choice is saved in the room memory and checked again every config.REMOTE_CHECK_INTERVAL ticks
     getRemoteRoom: function(room) {
