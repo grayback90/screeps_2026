@@ -224,7 +224,14 @@ function remoteBuildersNeeded(room) {
 
 //returns how many remoteHauler are needed
 function remoteHaulersNeeded(room) {
-    return 1;
+    //check if remote harvesting is enabled
+    if(!remoteHarvestingAllowed(room)) {
+        return 0;
+    } else {
+        return remote.getRemoteSources(room).length;
+        //other idea for claude:
+        //return sourcesWithContainer(room);
+    }
 }
 
 //spawn queue
