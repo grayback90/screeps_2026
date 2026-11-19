@@ -970,6 +970,61 @@ var tasks = {
         } else {
             tasks.gather(creep);
         }
+    },
+    //remote hauler: takes the energy out of the container in the remote room and brings it to the home room
+    remoteHaul: function(creep) {
+        //check if the home room is in the memory
+        if(!creep.memory.home) {
+            creep.memory.home = creep.room.name;
+        }
+
+        //get the home room and the remote room (the same room the remote miners use)
+        var home = Game.rooms[creep.memory.home];
+        var remoteRoom = remote.getRemoteRoom(home);
+
+        //empty -> fetch, full -> deliver
+        tasks.switchTask(creep, 'deliver', 'fetch');
+
+        //fetch the energy in the remote room
+        if(creep.memory.task == 'fetch') {
+            //there is no remote room
+            if(!remoteRoom) {
+                creep.say('No Room');
+                return;
+            }
+
+            //the creep is not in the remote room: travel there
+            if(creep.room.name != remoteRoom) {
+                creep.say('To Remote');
+                moveToTarget(creep, new RoomPosition(25, 25, remoteRoom), {range: 20});
+                return;
+            }
+
+            //pick up energy that lies on the ground
+            if(collectEnergy(creep)) {
+                return;
+            }
+
+            //take the energy out of the container, if there is nothing to fetch
+            //deliver what the creep carries, otherwise wait
+            if(!tasks.fetch(creep)) {
+                if(creep.store[RESOURCE_ENERGY] > 0) {
+                    creep.memory.task = 'deliver';
+                } else {
+                    creep.say('Waiting');
+                }
+            }
+            return;
+        }
+
+        //deliver the energy in the home room
+        //the creep is not at home: travel home
+        if(creep.room.name != creep.memory.home) {
+            creep.say('To Home');
+            moveToTarget(creep, new RoomPosition(25, 25, creep.memory.home), {range: 20});
+            return;
+        }
+        tasks.deliver(creep);
     }
 };
 

@@ -1,6 +1,9 @@
 xx.yy.2026
 - 
 
+19.11.2026
+- remote hauler
+
 13.11.2026 & 17.11.2026
 - logic how many remote builder/miner are spawned
 

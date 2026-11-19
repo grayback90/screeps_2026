@@ -19,13 +19,15 @@ var roleHauler = require('role.hauler');
 var roleScout = require('role.scout');
 var roleRemoteMiner = require('role.remoteminer');
 var roleRemoteBuilder = require('role.remotebuilder');
+var roleRemoteHauler = require('role.remotehauler');
 var defense = require('defense');
 var towerManager = require('tower.manager');
 var constructionManager = require('construction.manager');
 
 //table for all roles
 var roles = {harvester: roleHarvester, upgrader: roleUpgrader, builder: roleBuilder, towerFeeder: roleTowerFeeder, wallRepairer: roleWallRepairer,
-            defender: roleDefender, miner: roleMiner, hauler: roleHauler, scout: roleScout, remoteMiner: roleRemoteMiner, remoteBuilder: roleRemoteBuilder};
+            defender: roleDefender, miner: roleMiner, hauler: roleHauler, scout: roleScout, remoteMiner: roleRemoteMiner, remoteBuilder: roleRemoteBuilder,
+            remoteHauler: roleRemoteHauler};
 
 //table for all managers
 var managers = [{name: 'defense', module: defense},
